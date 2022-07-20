@@ -1,0 +1,14 @@
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    dev.d1s: debug
+
+simple-security:
+  authentication-secret: secret
+  enabled: false

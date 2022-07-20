@@ -1,0 +1,24 @@
+version: '3'
+
+volumes:
+  db-data-postgres:
+    driver: local
+
+  db-data-postgres-config:
+    driver: local
+
+services:
+  wot-postgres:
+    image: postgres:15beta2-bullseye
+    container_name: wot-postgres
+    environment:
+      POSTGRES_DB: "wot_data"
+      POSTGRES_USER: "wot_data"
+      POSTGRES_PASSWORD: "wot_data"
+      PGDATA: /var/lib/postgresql/data/pgdata
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data-postgres:/var/lib/postgresql/data
+      - db-data-postgres-config:/var/lib/postgresql/dataConfig

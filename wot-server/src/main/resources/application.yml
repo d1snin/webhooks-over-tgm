@@ -1,0 +1,27 @@
+spring:
+  profiles:
+    active: "prod"
+
+  application:
+    name: "webhooks-over-tgm"
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/wot_data
+    username: wot_data
+    password: wot_data
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    hibernate:
+      ddl-auto: none # required for liquibase migrations
+
+  liquibase:
+    change-log: db/changelog/db.changelog-main.xml
+
+  main:
+    banner-mode: off
+    allow-circular-references: true
+
+server:
+  port: 9696
