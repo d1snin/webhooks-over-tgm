@@ -100,11 +100,7 @@ class WebhookControllerImpl : WebhookController {
     }
 
     @Secured
-    override fun patchWebhookNonce(id: String): ResponseEntity<WebhookNonce> {
-        val (webhook, _) = webhookService.getWebhook(id)
-
-        return ok(
-            webhookService.regenerateNonce(webhook)
-        )
-    }
+    override fun patchWebhookNonce(id: String): ResponseEntity<WebhookNonce> = ok(
+        webhookService.regenerateNonce(id)
+    )
 }

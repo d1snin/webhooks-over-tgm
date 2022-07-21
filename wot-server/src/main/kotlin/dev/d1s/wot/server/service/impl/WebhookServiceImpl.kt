@@ -236,7 +236,9 @@ class WebhookServiceImpl : WebhookService {
         !to.private || webhookServiceImpl.isSubscribed(to, chat)
 
     @Transactional
-    override fun regenerateNonce(webhook: Webhook): WebhookNonce {
+    override fun regenerateNonce(id: String): WebhookNonce {
+        val (webhook, _) = webhookServiceImpl.getWebhook(id)
+
         val webhookNonce = this.createNonce()
 
         webhook.nonce = webhookNonce.nonce

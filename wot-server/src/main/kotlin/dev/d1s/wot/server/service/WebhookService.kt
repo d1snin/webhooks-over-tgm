@@ -45,7 +45,7 @@ interface WebhookService {
 
     fun hasAccess(chat: Chat, to: Webhook): Boolean
 
-    fun regenerateNonce(webhook: Webhook): WebhookNonce
+    fun regenerateNonce(id: String): WebhookNonce
 
     fun checkForCollision(webhook: Webhook)
 }
