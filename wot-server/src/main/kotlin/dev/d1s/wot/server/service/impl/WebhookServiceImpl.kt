@@ -16,7 +16,7 @@
 
 package dev.d1s.wot.server.service.impl
 
-import com.soywiz.krypto.SHA1
+import com.soywiz.krypto.encoding.hex
 import dev.d1s.advice.exception.UnprocessableEntityException
 import dev.d1s.advice.util.orElseNotFound
 import dev.d1s.lp.server.publisher.AsyncLongPollingEventPublisher
@@ -270,15 +270,13 @@ class WebhookServiceImpl : WebhookService {
 
         ThreadLocalRandom.current().nextBytes(buffer)
 
-        return WebhookNonce(
-            SHA1.digest(buffer).hex
-        )
+        return WebhookNonce(buffer.hex)
     }
 
     private companion object {
 
         private const val NOT_FOUND_MESSAGE = "Webhook not found."
 
-        private const val BUFFER_SIZE = 1024
+        private const val BUFFER_SIZE = 16
     }
 }
