@@ -43,7 +43,7 @@ class SubscribeBehaviour : Behaviour {
     override suspend fun BehaviourContext.buildBehaviour(webhook: Webhook) {
         onCommand(SUBSCRIBE_COMMAND) { message ->
             log.d {
-                "Handled $SUBSCRIBE_COMMAND."
+                "Handled $SUBSCRIBE_COMMAND. Webhook: $webhook."
             }
 
             val chat = message.chat
@@ -66,8 +66,12 @@ class SubscribeBehaviour : Behaviour {
                 val nonce = webhook.nonce
 
                 if (
-                    content == nonce || ServletUriComponentsBuilder.fromHttpUrl(content)
-                        .build().pathSegments.getOrNull(0)?.equals(nonce) == true
+                    content == nonce || try {
+                        ServletUriComponentsBuilder.fromHttpUrl(content)
+                            .build().pathSegments.getOrNull(0)?.equals(nonce) == true
+                    } catch (_: Exception) {
+                        false
+                    }
                 ) {
                     safe(message) {
                         webhookService.subscribe(webhook, chat).also {

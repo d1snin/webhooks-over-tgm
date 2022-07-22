@@ -67,7 +67,7 @@ data class Webhook(
     }
 
     override fun hashCode(): Int {
-        var result = requireNotNull(id).hashCode()
+        var result = id.hashCode()
         result = 31 * result + name.hashCode()
         result = 31 * result + nonce.hashCode()
         result = 31 * result + botToken.hashCode()

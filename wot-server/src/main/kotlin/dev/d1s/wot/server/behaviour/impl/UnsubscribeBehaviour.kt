@@ -43,7 +43,7 @@ class UnsubscribeBehaviour : Behaviour {
     override suspend fun BehaviourContext.buildBehaviour(webhook: Webhook) {
         onCommand(UNSUBSCRIBE_COMMAND) { message ->
             log.d {
-                "Handled $UNSUBSCRIBE_COMMAND."
+                "Handled $UNSUBSCRIBE_COMMAND. Webhook: $webhook."
             }
 
             val chat = message.chat

@@ -16,17 +16,21 @@
 
 package dev.d1s.wot.server.factory.impl
 
+import dev.d1s.advice.entity.ErrorResponseData
+import dev.d1s.advice.exception.HttpStatusException
 import dev.d1s.wot.server.configurer.TelegramBotConfigurer
 import dev.d1s.wot.server.constant.TELEGRAM_BOT_CACHE
 import dev.d1s.wot.server.entity.bot.StartedTelegramBot
 import dev.d1s.wot.server.entity.webhook.Webhook
 import dev.d1s.wot.server.factory.TelegramBotFactory
+import dev.inmo.tgbotapi.bot.exceptions.RequestException
 import dev.inmo.tgbotapi.extensions.api.telegramBot
 import kotlinx.coroutines.runBlocking
 import org.lighthousegames.logging.logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 
 @Component
@@ -44,7 +48,7 @@ class TelegramBotFactoryImpl : TelegramBotFactory {
 
     private val log = logging()
 
-    @Cacheable(TELEGRAM_BOT_CACHE)
+    @Cacheable(TELEGRAM_BOT_CACHE, key = "#webhook.nonce")
     override fun getTelegramBot(webhook: Webhook): StartedTelegramBot {
         log.d {
             "Creating TelegramBot for webhook $webhook."
@@ -53,7 +57,16 @@ class TelegramBotFactoryImpl : TelegramBotFactory {
         val bot = telegramBot(webhook.botToken)
 
         val job = runBlocking {
-            telegramBotConfigurer.configure(bot, webhook)
+            try {
+                telegramBotConfigurer.configure(bot, webhook)
+            } catch (e: RequestException) {
+                throw HttpStatusException(
+                    ErrorResponseData(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        "An error occurred while trying to configuring the bot: ${e.response.description ?: "no description"}"
+                    )
+                )
+            }
         }
 
         log.d {
@@ -68,8 +81,9 @@ class TelegramBotFactoryImpl : TelegramBotFactory {
             "Dememoizing and stopping TelegramBot for webhook $webhook."
         }
 
-        val startedBot = botCache?.get(webhook)
-            ?.get() as? StartedTelegramBot?
+        val startedBot = botCache?.get(
+            requireNotNull(webhook.nonce)
+        )?.get() as? StartedTelegramBot?
 
         startedBot?.job?.cancel()
         startedBot?.bot?.close()

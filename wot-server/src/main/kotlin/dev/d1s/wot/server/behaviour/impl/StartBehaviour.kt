@@ -37,7 +37,7 @@ class StartBehaviour : Behaviour {
     override suspend fun BehaviourContext.buildBehaviour(webhook: Webhook) {
         onCommand(START_COMMAND) {
             log.d {
-                "Handled $START_COMMAND."
+                "Handled $START_COMMAND. Webhook: $webhook."
             }
 
             sendMessage(

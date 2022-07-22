@@ -80,10 +80,10 @@ class WebhookServiceImpl : WebhookService {
 
         webhook.nonce = this.createNonce().nonce
 
-        val savedWebhook = webhookRepository.save(webhook)
-
         // init request executor...
         telegramBotFactory.getTelegramBot(webhook)
+
+        val savedWebhook = webhookRepository.save(webhook)
 
         log.d {
             "Successfully created webhook $webhook."
