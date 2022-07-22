@@ -35,6 +35,7 @@ import dev.d1s.wot.server.repository.DeliveryRepository
 import dev.d1s.wot.server.service.DeliveryService
 import dev.d1s.wot.server.service.TargetService
 import dev.inmo.tgbotapi.extensions.api.send.sendMessage
+import dev.inmo.tgbotapi.extensions.api.send.withTypingAction
 import dev.inmo.tgbotapi.types.ChatId
 import kotlinx.coroutines.*
 import org.lighthousegames.logging.logging
@@ -99,12 +100,16 @@ class DeliveryServiceImpl : DeliveryService {
                             targetService.makeUnavailable(it)
                         }
                     ) {
-                        bot.sendMessage(
-                            ChatId(it.chatId.toLong()),
-                            delivery.content.sources.map { source ->
-                                textSourceConverter.convert(source)
-                            }
-                        )
+                        val chat = ChatId(it.chatId.toLong())
+
+                        bot.withTypingAction(chat) {
+                            bot.sendMessage(
+                                chat,
+                                delivery.content.sources.map { source ->
+                                    textSourceConverter.convert(source)
+                                }
+                            )
+                        }
                     }
                 }
             }
