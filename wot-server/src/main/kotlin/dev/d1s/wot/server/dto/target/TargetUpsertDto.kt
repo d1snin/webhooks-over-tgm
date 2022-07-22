@@ -20,6 +20,10 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
 data class TargetUpsertDto(
-    var chatId: @NotBlank String,
-    var available: @NotNull Boolean
+
+    @field:NotBlank
+    val chatId: String,
+
+    @field:NotNull
+    val available: Boolean
 )

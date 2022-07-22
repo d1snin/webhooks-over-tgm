@@ -16,26 +16,21 @@
 
 package dev.d1s.wot.server.entity.content
 
-import dev.d1s.advice.exception.BadRequestException
-import dev.d1s.wot.server.constant.TEXT_LINK_MARKDOWN_REGEX
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
-data class FormattedTextSource(
-    val type: @NotNull FormattedTextSourceType,
-    val value: @NotBlank String,
-    val subsources: @NotNull List<@Valid FormattedTextSource>
+class FormattedTextSource(
+    _type: FormattedTextSourceType,
+    _value: String,
+    _subsources: List<FormattedTextSource>
 ) {
-    private val textLinkRegex = TEXT_LINK_MARKDOWN_REGEX.toRegex()
+    @NotNull
+    val type: FormattedTextSourceType = _type
 
-    init {
-        if (!type.supportsSubsources && subsources.isNotEmpty()) {
-            throw BadRequestException("This text source doesn't support subsources ($type).")
-        }
+    @NotBlank
+    val value: String = _value
 
-        if (type == FormattedTextSourceType.TEXT_LINK && !textLinkRegex.matches(value)) {
-            throw BadRequestException("A text link must follow the Markdown format.")
-        }
-    }
+    @NotNull
+    val subsources: List<@Valid FormattedTextSource> = _subsources
 }

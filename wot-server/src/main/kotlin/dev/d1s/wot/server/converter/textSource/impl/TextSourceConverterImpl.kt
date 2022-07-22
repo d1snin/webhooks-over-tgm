@@ -16,6 +16,8 @@
 
 package dev.d1s.wot.server.converter.textSource.impl
 
+import dev.d1s.advice.exception.BadRequestException
+import dev.d1s.wot.server.constant.TEXT_LINK_MARKDOWN_REGEX
 import dev.d1s.wot.server.converter.textSource.TextSourceConverter
 import dev.d1s.wot.server.entity.content.FormattedTextSource
 import dev.d1s.wot.server.entity.content.FormattedTextSourceType
@@ -26,8 +28,18 @@ import org.springframework.stereotype.Component
 @Component
 class TextSourceConverterImpl : TextSourceConverter {
 
+    private val textLinkRegex = TEXT_LINK_MARKDOWN_REGEX.toRegex()
+
     @OptIn(RiskFeature::class)
     override fun convert(formattedTextSource: FormattedTextSource): TextSource = formattedTextSource.run {
+        if (!type.supportsSubsources && subsources.isNotEmpty()) {
+            throw BadRequestException("This text source doesn't support subsources ($type).")
+        }
+
+        if (type == FormattedTextSourceType.TEXT_LINK && !textLinkRegex.matches(value)) {
+            throw BadRequestException("A text link must follow the Markdown format.")
+        }
+
         val transformedSubsources = subsources.map {
             convert(it)
         }

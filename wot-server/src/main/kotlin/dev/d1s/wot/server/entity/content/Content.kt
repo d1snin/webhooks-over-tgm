@@ -19,6 +19,9 @@ package dev.d1s.wot.server.entity.content
 import javax.validation.Valid
 import javax.validation.constraints.NotEmpty
 
-data class Content(
-    val sources: @NotEmpty List<@Valid FormattedTextSource>,
-)
+class Content(
+    _sources: List<FormattedTextSource>
+) {
+    @NotEmpty
+    val sources: List<@Valid FormattedTextSource> = _sources
+}
