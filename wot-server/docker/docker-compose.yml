@@ -9,7 +9,7 @@ volumes:
 
 services:
   wot-postgres:
-    image: postgres:15beta2-bullseye
+    image: postgres:latest
     container_name: wot-postgres
     environment:
       POSTGRES_DB: "wot_data"
