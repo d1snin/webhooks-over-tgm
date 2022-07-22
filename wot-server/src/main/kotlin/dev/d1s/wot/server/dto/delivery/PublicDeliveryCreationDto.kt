@@ -20,5 +20,7 @@ import dev.d1s.wot.server.entity.content.Content
 import javax.validation.Valid
 
 data class PublicDeliveryCreationDto(
-    var content: @Valid Content
+
+    @field:Valid
+    val content: Content
 )

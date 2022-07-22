@@ -21,6 +21,10 @@ import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 
 data class DeliveryCreationDto(
-    var content: @Valid Content,
-    var webhook: @NotBlank String
+
+    @field:Valid
+    val content: Content,
+
+    @field:NotBlank
+    val webhook: String
 )
