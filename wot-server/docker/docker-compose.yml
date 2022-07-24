@@ -36,7 +36,7 @@ services:
       - wot-postgres
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://wot-postgres:5432/wot_data
-    restart: on-failure
+    restart: always
 
 networks:
   wot-net:
