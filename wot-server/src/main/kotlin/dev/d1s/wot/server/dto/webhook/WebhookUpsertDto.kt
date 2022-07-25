@@ -21,21 +21,22 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
 
+@Suppress("CanBePrimaryConstructorProperty")
 class WebhookUpsertDto(
-    _name: String,
-    _botToken: String,
-    _private: Boolean,
-    _targets: List<String>
+    name: String,
+    botToken: String,
+    private: Boolean,
+    targets: List<String>
 ) {
     @Pattern(regexp = COMMON_NAME_REGEX)
-    val name: String = _name
+    val name: String = name
 
     @NotBlank
-    val botToken: String = _botToken
+    val botToken: String = botToken
 
     @NotNull
-    val private: Boolean = _private
+    val private: Boolean = private
 
     @NotNull
-    val targets: List<@NotBlank String> = _targets
+    val targets: List<@NotBlank String> = targets
 }

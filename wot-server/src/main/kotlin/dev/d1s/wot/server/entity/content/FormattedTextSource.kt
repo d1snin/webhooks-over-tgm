@@ -20,17 +20,18 @@ import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
+@Suppress("CanBePrimaryConstructorProperty")
 class FormattedTextSource(
-    _type: FormattedTextSourceType,
-    _value: String,
-    _subsources: List<FormattedTextSource>
+    type: FormattedTextSourceType,
+    value: String,
+    subsources: List<FormattedTextSource>
 ) {
     @NotNull
-    val type: FormattedTextSourceType = _type
+    val type: FormattedTextSourceType = type
 
     @NotBlank
-    val value: String = _value
+    val value: String = value
 
     @NotNull
-    val subsources: List<@Valid FormattedTextSource> = _subsources
+    val subsources: List<@Valid FormattedTextSource> = subsources
 }

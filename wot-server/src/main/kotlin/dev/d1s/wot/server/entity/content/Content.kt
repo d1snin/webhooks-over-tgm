@@ -19,9 +19,10 @@ package dev.d1s.wot.server.entity.content
 import javax.validation.Valid
 import javax.validation.constraints.NotEmpty
 
+@Suppress("CanBePrimaryConstructorProperty")
 class Content(
-    _sources: List<FormattedTextSource>
+    sources: List<FormattedTextSource>
 ) {
     @NotEmpty
-    val sources: List<@Valid FormattedTextSource> = _sources
+    val sources: List<@Valid FormattedTextSource> = sources
 }
