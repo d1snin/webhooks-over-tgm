@@ -44,10 +44,10 @@ class StartBehaviour : Behaviour {
                 it.chat,
                 buildEntities {
                     +"Hi, here you can subscribe or unsubscribe from messages. Send me " +
-                            botCommand(SUBSCRIBE_COMMAND) +
-                            " or " +
-                            botCommand(UNSUBSCRIBE_COMMAND) +
-                            "."
+                        botCommand(SUBSCRIBE_COMMAND) +
+                        " or " +
+                        botCommand(UNSUBSCRIBE_COMMAND) +
+                        "."
                 }
             )
         }

@@ -59,8 +59,8 @@ data class Target(
     }
 
     override fun toString() = "Target(" +
-            "id='$id', " +
-            "chatId='$chatId', " +
-            "available=$available, " +
-            "webhooks=${webhooks.mapToIdList()})"
+        "id='$id', " +
+        "chatId='$chatId', " +
+        "available=$available, " +
+        "webhooks=${webhooks.mapToIdList()})"
 }

@@ -19,8 +19,8 @@ package dev.d1s.wot.server.service
 import dev.d1s.teabag.dto.EntityWithDto
 import dev.d1s.teabag.dto.EntityWithDtoList
 import dev.d1s.wot.server.dto.webhook.WebhookDto
-import dev.d1s.wot.server.entity.webhook.WebhookNonce
 import dev.d1s.wot.server.entity.webhook.Webhook
+import dev.d1s.wot.server.entity.webhook.WebhookNonce
 import dev.inmo.tgbotapi.types.chat.Chat
 
 interface WebhookService {

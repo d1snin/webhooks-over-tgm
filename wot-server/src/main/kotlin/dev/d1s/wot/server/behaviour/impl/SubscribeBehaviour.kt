@@ -56,7 +56,7 @@ class SubscribeBehaviour : Behaviour {
                 reply(
                     message,
                     "This webhook is private. Please send me a nonce of the webhook. " +
-                            "You can also send a webhook URL containing a nonce."
+                        "You can also send a webhook URL containing a nonce."
                 )
 
                 val textMessage = waitTextMessage().first()

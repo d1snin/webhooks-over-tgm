@@ -76,11 +76,11 @@ data class Webhook(
     }
 
     override fun toString() = "Webhook(" +
-            "id='$id', " +
-            "name='$name', " +
-            "nonce='$nonce', " +
-            "botToken='$botToken', " +
-            "private=$private, " +
-            "targets=${targets.mapToIdList()}, " +
-            "deliveries=${deliveries.mapToIdList()})"
+        "id='$id', " +
+        "name='$name', " +
+        "nonce='$nonce', " +
+        "botToken='$botToken', " +
+        "private=$private, " +
+        "targets=${targets.mapToIdList()}, " +
+        "deliveries=${deliveries.mapToIdList()})"
 }

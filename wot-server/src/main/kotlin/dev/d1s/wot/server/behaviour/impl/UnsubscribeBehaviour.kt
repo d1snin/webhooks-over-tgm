@@ -57,8 +57,8 @@ class UnsubscribeBehaviour : Behaviour {
                     message,
                     buildEntities {
                         +"You aren't subscribed yet. Subscribe using " +
-                                botCommand(SUBSCRIBE_COMMAND) +
-                                "."
+                            botCommand(SUBSCRIBE_COMMAND) +
+                            "."
                     }
                 )
             } else {

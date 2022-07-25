@@ -71,9 +71,9 @@ data class Delivery(
     }
 
     override fun toString() = "Delivery(" +
-            "id='$id', " +
-            "content=$content, " +
-            "successful=$successful, " +
-            "time=$time, " +
-            "webhook=$webhook)"
+        "id='$id', " +
+        "content=$content, " +
+        "successful=$successful, " +
+        "time=$time, " +
+        "webhook=$webhook)"
 }
