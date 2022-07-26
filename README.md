@@ -11,9 +11,9 @@ Just like in Discord or Slack. You simply `POST` a message to chats:
 ### Table of contents
 
 - [Features](#Features)
-- [Running the server](#Running the server)
-- [Example usage](#Example usage)
-- [WoT SDKs](#WoT SDKs)
+- [Running](#Running)
+- [Usage](#Usage)
+- [SDKs](#SDKs)
 - [License](#License)
 
 ### Features
@@ -28,7 +28,7 @@ Just like in Discord or Slack. You simply `POST` a message to chats:
 - Automatic payload mapping from other services ***(WIP)***
 - Supervisor Bot that simplifies interactions with the API ***(WIP)***
 
-### Running the server
+### Running
 
 To run the server you should have Java 17+ and Docker Compose installed.
 
@@ -62,7 +62,7 @@ Run the containers:
 docker-compose -f ./wot-server/docker/docker-compose.yml up -d
 ```
 
-### Example usage
+### Usage
 
 Let's start with creating a webhook:
 
@@ -109,9 +109,9 @@ Content-Type: application/json
 #### Authorization
 
 Each request to `/api/**` path must include a secret key within the `Authorization` header.
-See [Running the server](#Running the server) for more info.
+See [Running](#Running) for more info.
 
-### WoT SDKs
+### SDKs
 
 - [wot-client](https://github.com/d1s-utils/webhooks-over-tgm/tree/main/wot-client): WoT API client for Kotlin
   Multiplatform. **Currently, WIP**.
