@@ -13,21 +13,7 @@ Just like in Discord or Slack. You simply `POST` a message to chats:
 - [Features](#Features)
 - [Running the server](#Running the server)
 - [Example usage](#Example usage)
-
-[//]: # (- [RESTful API]&#40;#RESTful API&#41;)
-
-[//]: # (    - [Authorization]&#40;#Authorization&#41;)
-
-[//]: # (    - [Webhooks]&#40;#Webhooks&#41;)
-
-[//]: # (    - [Deliveries]&#40;#Deliveries&#41;)
-
-[//]: # (    - [Targets]&#40;#Targets&#41;)
-
 - [WoT SDKs](#WoT SDKs)
-
-[//]: # (- [Supervisor Bot]&#40;#Supervisor Bot&#41;)
-
 - [License](#License)
 
 ### Features
