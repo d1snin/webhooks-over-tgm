@@ -2,4 +2,4 @@ management:
   endpoints:
     web:
       exposure:
-        exclude: "*"
+        include: "info"
