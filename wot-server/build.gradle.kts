@@ -30,8 +30,6 @@ val teabagsVersion: String by project
 val starterSimpleSecurityVersion: String by project
 val starterAdviceVersion: String by project
 val starterWelcomerVersion: String by project
-val springmockkVersion: String by project
-val striktVersion: String by project
 val longPollingStarterVersion: String by project
 val caffeineVersion: String by project
 val kmLogVersion: String by project
@@ -64,10 +62,6 @@ dependencies {
     implementation("org.liquibase:liquibase-core:$liquibaseVersion")
     implementation("com.vladmihalcea:hibernate-types-55:$hibernateTypesVersion")
     implementation("dev.inmo:tgbotapi-jvm:$tgbotapiVersion")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("com.ninja-squad:springmockk:$springmockkVersion")
-    testImplementation("io.strikt:strikt-jvm:$striktVersion")
-    testImplementation("dev.d1s.teabags:teabag-testing:$teabagsVersion")
 }
 
 configurations["implementation"].exclude(
