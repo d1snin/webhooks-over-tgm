@@ -8,8 +8,8 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/wot_data
-    username: wot_data
-    password: wot_data
+    username: postgres_user
+    password: postgres_password
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
