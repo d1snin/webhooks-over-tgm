@@ -13,7 +13,7 @@ Just like in Discord or Slack. You simply `POST` a message to chats:
 - [Features](#Features)
 - [Running](#Running)
 - [Usage](#Usage)
-- [SDKs](#SDKs)
+- [Libraries](#Libraries)
 - [License](#License)
 
 ### Features
@@ -24,7 +24,8 @@ Just like in Discord or Slack. You simply `POST` a message to chats:
 - Multiple webhooks support
 - Formatting support
 - Attachments support ***(WIP)***
-- [Kotlin SDK for WoT](./wot-client)
+- [Kotlin library for WoT](./wot-client)
+- Spring Boot starter that autoconfigures the Kotlin library for WoT
 - Automatic payload mapping from other services ***(WIP)***
 - Supervisor Bot that simplifies interactions with the API ***(WIP)***
 
@@ -111,7 +112,7 @@ Content-Type: application/json
 Each request to `/api/**` path must include a secret key within the `Authorization` header.
 See [Running](#Running) for more info.
 
-### SDKs
+### Libraries
 
 - [wot-client](https://github.com/d1s-utils/webhooks-over-tgm/tree/main/wot-client): WoT API client for Kotlin
   Multiplatform. **Currently, WIP**.

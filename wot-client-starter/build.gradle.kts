@@ -14,3 +14,45 @@
  * limitations under the License.
  */
 
+plugins {
+    kotlin("plugin.spring")
+    id("java-library")
+    id("maven-publish")
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
+}
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    implementation(project(":wot-client"))
+}
+
+tasks.withType<Jar> {
+    archiveClassifier.set("")
+}
+
+tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
+    enabled = false
+}
+
+tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootBuildImage> {
+    enabled = false
+}
+
+tasks.withType<org.springframework.boot.gradle.tasks.run.BootRun> {
+    enabled = false
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("wot-client-starter") {
+            from(components["java"])
+        }
+    }
+}
+
+kotlin {
+    explicitApi()
+}
