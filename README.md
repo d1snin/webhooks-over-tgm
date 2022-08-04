@@ -67,7 +67,7 @@ docker-compose -f ./wot-server/docker/docker-compose.yml up -d
 Let's start with creating a webhook:
 
 ```http request
-POST http://localhost:9696/api/webhooks
+POST https://localhost:9696/api/webhooks
 Content-Type: application/json
 Authorization: ...
 
@@ -88,7 +88,7 @@ Since this webhook is marked as `private`, we have to send its nonce which we go
 Well, let's send a message now:
 
 ```http request
-POST http://localhost:9696/<webhook nonce>
+POST https://localhost:9696/<webhook nonce>
 Content-Type: application/json
 
 {
