@@ -24,7 +24,7 @@ allprojects {
     }
 
     group = "dev.d1s"
-    version = "0.1.0-beta.7"
+    version = "1.0.0"
 
     repositories {
         mavenCentral()
