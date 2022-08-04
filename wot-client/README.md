@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/dev.d1s/webhooks-over-tgm.svg)](https://jitpack.io/#dev.d1s/webhooks-over-tgm)
+
 ### Kotlin library for WoT
 
 This is the Kotlin client for the WoT public and private APIs. With which you can send messages to webhooks, manage
@@ -9,7 +11,7 @@ WoT library binaries are served over Jitpack.
 
 ```kotlin 
 repositories {
-    maven(url = "https://jitpack.io)
+    maven(url = "https://jitpack.io")
 }
 
 val wotClientVersion: String by project
@@ -69,13 +71,32 @@ suspend fun main() {
 suspend fun main() {
     val cluster = wotWebhookClientCluster {
         val baseUrl = "https://wot.example.com"
-        
+
         baseUrl withNonce "first_nonce"
         baseUrl withnonce "second_nonce"
     }
-    
+
     cluster.publish {
         bold("Hello, World!")
+    }
+}
+```
+
+#### Using long-polling API client
+
+```kotlin
+suspend fun main() {
+    val client = wotClient(
+        baseUrl = "https://wot.example.com",
+        authorization = "your_secret_key"
+    )
+
+    val lp = client.longPollingClient
+
+    lp.onWebhookCreated {
+        val webhook = data
+
+        println("A webhook with ID ${webhook.id} has been created at $timestamp.")
     }
 }
 ```
