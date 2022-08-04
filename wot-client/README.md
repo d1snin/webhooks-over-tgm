@@ -1,11 +1,11 @@
-### WoT Kotlin SDK
+### Kotlin library for WoT
 
 This is the Kotlin client for the WoT public and private APIs. With which you can send messages to webhooks, manage
 entities and receive events.
 
 ### Installation
 
-WoT SDK binaries are served over Jitpack.
+WoT library binaries are served over Jitpack.
 
 ```kotlin 
 repositories {
