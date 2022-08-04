@@ -23,6 +23,9 @@ import dev.d1s.wot.client.entity.target.Target
 import dev.d1s.wot.client.entity.webhook.Webhook
 import dev.d1s.wot.client.entity.webhook.WebhookNonce
 
+private const val AVAILABLE_DEFAULT = true
+private const val PRIVATE_DEFAULT = false
+
 public sealed interface WotClient : BaseUrlAware {
 
     public val longPollingClient: LongPollingClient
@@ -62,7 +65,7 @@ public sealed interface WotClient : BaseUrlAware {
     ): Result<Unit>
 
     public suspend fun postTarget(
-        chatId: String, available: Boolean = true
+        chatId: String, available: Boolean = AVAILABLE_DEFAULT
     ): Result<Target>
 
     public suspend fun getTarget(
@@ -72,11 +75,11 @@ public sealed interface WotClient : BaseUrlAware {
     public suspend fun getAllTargets(): Result<List<Target>>
 
     public suspend fun putTarget(
-        targetId: String, chatId: String, available: Boolean = true
+        targetId: String, chatId: String, available: Boolean = AVAILABLE_DEFAULT
     ): Result<Target>
 
     public suspend fun putTarget(
-        target: Target, chatId: String, available: Boolean = true
+        target: Target, chatId: String, available: Boolean = AVAILABLE_DEFAULT
     ): Result<Target>
 
     public suspend fun deleteTarget(
@@ -88,7 +91,11 @@ public sealed interface WotClient : BaseUrlAware {
     ): Result<Unit>
 
     public suspend fun postWebhook(
-        name: String, botToken: String, private: Boolean, available: Boolean, targetIds: List<String>
+        name: String,
+        botToken: String,
+        private: Boolean = PRIVATE_DEFAULT,
+        available: Boolean = AVAILABLE_DEFAULT,
+        targetIds: List<String> = listOf()
     ): Result<Webhook>
 
     public suspend fun getWebhook(
@@ -98,11 +105,21 @@ public sealed interface WotClient : BaseUrlAware {
     public suspend fun getAllWebhooks(): Result<List<Webhook>>
 
     public suspend fun putWebhook(
-        webhookId: String, name: String, botToken: String, private: Boolean, available: Boolean, targetIds: List<String>
+        webhookId: String,
+        name: String,
+        botToken: String,
+        private: Boolean = PRIVATE_DEFAULT,
+        available: Boolean = AVAILABLE_DEFAULT,
+        targetIds: List<String> = listOf()
     ): Result<Webhook>
 
     public suspend fun putWebhook(
-        webhook: Webhook, name: String, botToken: String, private: Boolean, available: Boolean, targetIds: List<String>
+        webhook: Webhook,
+        name: String,
+        botToken: String,
+        private: Boolean = false,
+        available: Boolean = true,
+        targetIds: List<String> = listOf()
     ): Result<Webhook>
 
     public suspend fun regenerateWebhookNonce(
