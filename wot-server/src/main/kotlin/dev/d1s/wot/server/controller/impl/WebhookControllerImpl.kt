@@ -18,16 +18,15 @@ package dev.d1s.wot.server.controller.impl
 
 import dev.d1s.security.configuration.annotation.Secured
 import dev.d1s.teabag.dto.DtoConverter
-import dev.d1s.teabag.web.buildFromCurrentRequest
-import dev.d1s.teabag.web.configureScheme
-import dev.d1s.teabag.web.properties.HttpConfigurationProperties
+import dev.d1s.teabag.web.LocationFactory
+import dev.d1s.wot.commons.dto.webhook.WebhookDto
+import dev.d1s.wot.commons.dto.webhook.WebhookUpsertDto
 import dev.d1s.wot.server.controller.WebhookController
-import dev.d1s.wot.server.dto.webhook.WebhookDto
-import dev.d1s.wot.server.dto.webhook.WebhookUpsertDto
 import dev.d1s.wot.server.entity.webhook.Webhook
 import dev.d1s.wot.server.entity.webhook.WebhookNonce
 import dev.d1s.wot.server.service.WebhookService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.*
 import org.springframework.web.bind.annotation.RestController
@@ -42,11 +41,11 @@ class WebhookControllerImpl : WebhookController {
     lateinit var webhookUpsertDtoConverter: DtoConverter<WebhookUpsertDto, Webhook>
 
     @set:Autowired
-    lateinit var httpConfigurationProperties: HttpConfigurationProperties
+    lateinit var locationFactory: LocationFactory
 
     @Secured
     override fun postWebhook(webhookUpsertDto: WebhookUpsertDto): ResponseEntity<WebhookDto> {
-        val (_, webhookDto) = webhookService.createWebhook(
+        val (webhook, webhookDto) = webhookService.createWebhook(
             webhookUpsertDtoConverter.convertToEntity(
                 webhookUpsertDto
             )
@@ -55,11 +54,7 @@ class WebhookControllerImpl : WebhookController {
         requireNotNull(webhookDto)
 
         return created(
-            buildFromCurrentRequest {
-                configureScheme(httpConfigurationProperties)
-                path("/${webhookDto.id}")
-                build().toUri()
-            }
+            locationFactory.newLocation(webhook)
         ).body(webhookDto)
     }
 
@@ -77,10 +72,13 @@ class WebhookControllerImpl : WebhookController {
         return ok(webhookDtoList)
     }
 
-    // no-op endpoint for services like GitHub.
     // not using @Secured here
     override fun getWebhookAvailability(webhookNonce: String): ResponseEntity<Any> =
-        ok().build()
+        if (webhookService.isAvailable(webhookNonce)) {
+            ok().build()
+        } else {
+            status(HttpStatus.FORBIDDEN).build()
+        }
 
     @Secured
     override fun putWebhook(id: String, webhookUpsertDto: WebhookUpsertDto): ResponseEntity<WebhookDto> {

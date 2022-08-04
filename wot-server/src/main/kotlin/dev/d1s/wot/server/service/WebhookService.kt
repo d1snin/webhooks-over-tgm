@@ -18,7 +18,7 @@ package dev.d1s.wot.server.service
 
 import dev.d1s.teabag.dto.EntityWithDto
 import dev.d1s.teabag.dto.EntityWithDtoList
-import dev.d1s.wot.server.dto.webhook.WebhookDto
+import dev.d1s.wot.commons.dto.webhook.WebhookDto
 import dev.d1s.wot.server.entity.webhook.Webhook
 import dev.d1s.wot.server.entity.webhook.WebhookNonce
 import dev.inmo.tgbotapi.types.chat.Chat
@@ -36,6 +36,10 @@ interface WebhookService {
     fun updateWebhook(id: String, webhook: Webhook): EntityWithDto<Webhook, WebhookDto>
 
     fun deleteWebhook(id: String)
+
+    fun isAvailable(id: String): Boolean
+
+    fun checkAvailability(webhook: Webhook)
 
     fun subscribe(webhook: Webhook, chat: Chat)
 

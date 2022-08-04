@@ -16,10 +16,10 @@
 
 package dev.d1s.wot.server.controller
 
-import dev.d1s.wot.server.constant.*
-import dev.d1s.wot.server.dto.delivery.DeliveryCreationDto
-import dev.d1s.wot.server.dto.delivery.DeliveryDto
-import dev.d1s.wot.server.dto.delivery.PublicDeliveryCreationDto
+import dev.d1s.wot.commons.constant.*
+import dev.d1s.wot.commons.dto.delivery.DeliveryCreationDto
+import dev.d1s.wot.commons.dto.delivery.DeliveryDto
+import dev.d1s.wot.commons.dto.delivery.PublicDeliveryCreationDto
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*

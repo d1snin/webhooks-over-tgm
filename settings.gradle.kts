@@ -24,6 +24,7 @@ pluginManagement {
 
     plugins {
         kotlin("jvm") version kotlinVersion
+        kotlin("multiplatform") version kotlinVersion
         kotlin("plugin.spring") version kotlinVersion
         kotlin("plugin.jpa") version kotlinVersion
         id("org.springframework.boot") version springBootVersion

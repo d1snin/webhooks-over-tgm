@@ -18,7 +18,7 @@ package dev.d1s.wot.server.entity.delivery
 
 import com.vladmihalcea.hibernate.type.json.JsonType
 import dev.d1s.teabag.data.jpa.Identifiable
-import dev.d1s.wot.server.entity.content.Content
+import dev.d1s.wot.commons.entity.content.Content
 import dev.d1s.wot.server.entity.webhook.Webhook
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef

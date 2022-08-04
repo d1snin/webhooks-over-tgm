@@ -19,18 +19,18 @@ package dev.d1s.wot.server.service.impl
 import com.soywiz.krypto.encoding.hex
 import dev.d1s.advice.exception.UnprocessableEntityException
 import dev.d1s.advice.util.orElseNotFound
+import dev.d1s.lp.commons.event.data.EntityUpdatedEventData
 import dev.d1s.lp.server.publisher.AsyncLongPollingEventPublisher
 import dev.d1s.teabag.dto.DtoConverter
-import dev.d1s.teabag.dto.DtoListConverterFacade
 import dev.d1s.teabag.dto.EntityWithDto
 import dev.d1s.teabag.dto.EntityWithDtoList
 import dev.d1s.teabag.dto.util.convertToDtoIf
 import dev.d1s.teabag.dto.util.convertToDtoListIf
-import dev.d1s.teabag.dto.util.converterForList
-import dev.d1s.wot.server.constant.*
-import dev.d1s.wot.server.dto.webhook.WebhookDto
+import dev.d1s.wot.commons.constant.*
+import dev.d1s.wot.commons.dto.webhook.WebhookDto
 import dev.d1s.wot.server.entity.webhook.Webhook
 import dev.d1s.wot.server.entity.webhook.WebhookNonce
+import dev.d1s.wot.server.exception.UnavailableWebhookException
 import dev.d1s.wot.server.factory.TelegramBotFactory
 import dev.d1s.wot.server.repository.WebhookRepository
 import dev.d1s.wot.server.service.TargetService
@@ -66,10 +66,6 @@ class WebhookServiceImpl : WebhookService {
     @set:Autowired
     lateinit var webhookServiceImpl: WebhookServiceImpl
 
-    private val webhookListDtoConverter: DtoListConverterFacade<WebhookDto, Webhook> by lazy {
-        webhookDtoConverter.converterForList()
-    }
-
     private val log = logging()
 
     @Transactional
@@ -92,9 +88,7 @@ class WebhookServiceImpl : WebhookService {
         val webhookDto = webhookDtoConverter.convertToDto(savedWebhook)
 
         publisher.publish(
-            WEBHOOK_CREATED_GROUP,
-            requireNotNull(savedWebhook.id),
-            webhookDto
+            WEBHOOK_CREATED_GROUP, requireNotNull(savedWebhook.id), webhookDto
         )
 
         return savedWebhook to webhookDto
@@ -102,16 +96,14 @@ class WebhookServiceImpl : WebhookService {
 
     @Transactional(readOnly = true)
     override fun getWebhook(id: String, requireDto: Boolean): EntityWithDto<Webhook, WebhookDto> {
-        val webhook = webhookRepository.findWebhookByIdOrNameOrNonce(id)
-            .orElseNotFound(NOT_FOUND_MESSAGE)
+        val webhook = webhookRepository.findWebhookByIdOrNameOrNonce(id).orElseNotFound(NOT_FOUND_MESSAGE)
 
         return webhook to webhookDtoConverter.convertToDtoIf(webhook, requireDto)
     }
 
     @Transactional(readOnly = true)
     override fun getWebhookByNonce(nonce: String, requireDto: Boolean): EntityWithDto<Webhook, WebhookDto> {
-        val webhook = webhookRepository.findWebhookByNonce(nonce)
-            .orElseNotFound(NOT_FOUND_MESSAGE)
+        val webhook = webhookRepository.findWebhookByNonce(nonce).orElseNotFound(NOT_FOUND_MESSAGE)
 
         return webhook to webhookDtoConverter.convertToDtoIf(webhook, requireDto)
     }
@@ -120,7 +112,7 @@ class WebhookServiceImpl : WebhookService {
     override fun getAllWebhooks(requireDto: Boolean): EntityWithDtoList<Webhook, WebhookDto> {
         val webhooks = webhookRepository.findAll()
 
-        return webhooks to webhookListDtoConverter.convertToDtoListIf(webhooks, requireDto)
+        return webhooks to webhookDtoConverter.convertToDtoListIf(webhooks, requireDto)
     }
 
     @Transactional
@@ -131,7 +123,7 @@ class WebhookServiceImpl : WebhookService {
 
         webhookServiceImpl.checkForCollision(webhook)
 
-        val (existingWebhook, _) = webhookServiceImpl.getWebhook(id)
+        val (existingWebhook, existingWebhookDto) = webhookServiceImpl.getWebhook(id, true)
 
         telegramBotFactory.dememoizeAndStopTelegramBot(existingWebhook)
 
@@ -153,7 +145,7 @@ class WebhookServiceImpl : WebhookService {
         publisher.publish(
             WEBHOOK_UPDATED_GROUP,
             requireNotNull(savedWebhook.id),
-            webhookDto
+            EntityUpdatedEventData(requireNotNull(existingWebhookDto), webhookDto)
         )
 
         return savedWebhook to webhookDto
@@ -176,10 +168,22 @@ class WebhookServiceImpl : WebhookService {
         }
 
         publisher.publish(
-            WEBHOOK_DELETED_GROUP,
-            requireNotNull(existingWebhook.id),
-            webhookDto
+            WEBHOOK_DELETED_GROUP, requireNotNull(existingWebhook.id), webhookDto
         )
+    }
+
+    override fun isAvailable(id: String): Boolean {
+        val (webhook, _) = webhookServiceImpl.getWebhook(id)
+
+        return webhook.available
+    }
+
+    override fun checkAvailability(webhook: Webhook) {
+        if (!webhook.available) {
+            throw UnavailableWebhookException(
+                requireNotNull(webhook.id)
+            )
+        }
     }
 
     @Transactional
@@ -187,6 +191,8 @@ class WebhookServiceImpl : WebhookService {
         log.d {
             "Subscribing ${chat.idString} to webhook $webhook."
         }
+
+        webhookServiceImpl.checkAvailability(webhook)
 
         webhook.targets += targetService.createOrGetTargetForChar(chat.idString)
 
@@ -197,9 +203,7 @@ class WebhookServiceImpl : WebhookService {
         }
 
         publisher.publish(
-            WEBHOOK_SUBSCRIBED_GROUP,
-            requireNotNull(savedWebhook.id),
-            webhookDtoConverter.convertToDto(savedWebhook)
+            WEBHOOK_SUBSCRIBED_GROUP, requireNotNull(savedWebhook.id), webhookDtoConverter.convertToDto(savedWebhook)
         )
     }
 
@@ -220,20 +224,16 @@ class WebhookServiceImpl : WebhookService {
         }
 
         publisher.publish(
-            WEBHOOK_UNSUBSCRIBED_GROUP,
-            requireNotNull(savedWebhook.id),
-            webhookDtoConverter.convertToDto(savedWebhook)
+            WEBHOOK_UNSUBSCRIBED_GROUP, requireNotNull(savedWebhook.id), webhookDtoConverter.convertToDto(savedWebhook)
         )
     }
 
     @Transactional(readOnly = true)
-    override fun isSubscribed(webhook: Webhook, chat: Chat): Boolean =
-        webhook.targets.map {
-            it.chatId
-        }.contains(chat.idString)
+    override fun isSubscribed(webhook: Webhook, chat: Chat): Boolean = webhook.targets.map {
+        it.chatId
+    }.contains(chat.idString)
 
-    override fun hasAccess(chat: Chat, to: Webhook): Boolean =
-        !to.private || webhookServiceImpl.isSubscribed(to, chat)
+    override fun hasAccess(chat: Chat, to: Webhook): Boolean = !to.private || webhookServiceImpl.isSubscribed(to, chat)
 
     @Transactional
     override fun regenerateNonce(id: String): WebhookNonce {
@@ -246,9 +246,7 @@ class WebhookServiceImpl : WebhookService {
         val savedWebhook = webhookRepository.save(webhook)
 
         publisher.publish(
-            WEBHOOK_NONCE_REGENERATED_GROUP,
-            requireNotNull(savedWebhook.id),
-            webhookNonce
+            WEBHOOK_NONCE_REGENERATED_GROUP, requireNotNull(savedWebhook.id), webhookNonce
         )
 
         return webhookNonce
@@ -263,7 +261,9 @@ class WebhookServiceImpl : WebhookService {
         }
 
         collidingSubject?.let {
-            throw UnprocessableEntityException("Webhook with the same $it already exists.")
+            throw UnprocessableEntityException(
+                COLLISION_MESSAGE.format(it)
+            )
         }
     }
 
@@ -278,6 +278,8 @@ class WebhookServiceImpl : WebhookService {
     private companion object {
 
         private const val NOT_FOUND_MESSAGE = "Webhook not found."
+
+        private const val COLLISION_MESSAGE = "Webhook with the same %s already exists."
 
         private const val BUFFER_SIZE = 16
     }

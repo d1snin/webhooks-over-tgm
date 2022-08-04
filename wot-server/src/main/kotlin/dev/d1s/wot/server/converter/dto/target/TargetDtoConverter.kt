@@ -18,7 +18,7 @@ package dev.d1s.wot.server.converter.dto.target
 
 import dev.d1s.teabag.data.jpa.util.mapToNotNullIdList
 import dev.d1s.teabag.dto.DtoConverter
-import dev.d1s.wot.server.dto.target.TargetDto
+import dev.d1s.wot.commons.dto.target.TargetDto
 import dev.d1s.wot.server.entity.target.Target
 import org.springframework.stereotype.Component
 

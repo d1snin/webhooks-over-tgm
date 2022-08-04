@@ -16,9 +16,9 @@
 
 package dev.d1s.wot.server.controller
 
-import dev.d1s.wot.server.constant.*
-import dev.d1s.wot.server.dto.target.TargetDto
-import dev.d1s.wot.server.dto.target.TargetUpsertDto
+import dev.d1s.wot.commons.constant.*
+import dev.d1s.wot.commons.dto.target.TargetDto
+import dev.d1s.wot.commons.dto.target.TargetUpsertDto
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*

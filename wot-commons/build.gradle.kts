@@ -14,3 +14,37 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    id("java-library")
+    id("maven-publish")
+}
+
+java.sourceCompatibility = JavaVersion.VERSION_11
+
+dependencies {
+    val teabagsVersion: String by project
+    val validationApiVersion: String by project
+
+    implementation("dev.d1s.teabags:teabag-spring-web:$teabagsVersion")
+    implementation("jakarta.validation:jakarta.validation-api:$validationApiVersion")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("wot-commons") {
+            from(components["java"])
+        }
+    }
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
+
+kotlin {
+    explicitApi()
+}

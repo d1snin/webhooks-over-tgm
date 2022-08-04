@@ -18,7 +18,7 @@ package dev.d1s.wot.server.converter.dto.webhook
 
 import dev.d1s.teabag.data.jpa.util.mapToNotNullIdList
 import dev.d1s.teabag.dto.DtoConverter
-import dev.d1s.wot.server.dto.webhook.WebhookDto
+import dev.d1s.wot.commons.dto.webhook.WebhookDto
 import dev.d1s.wot.server.entity.webhook.Webhook
 import org.springframework.stereotype.Component
 
@@ -32,6 +32,7 @@ class WebhookDtoConverter : DtoConverter<WebhookDto, Webhook> {
             requireNotNull(nonce),
             botToken,
             private,
+            available,
             targets.mapToNotNullIdList(),
             deliveries.mapToNotNullIdList()
         )

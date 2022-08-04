@@ -18,7 +18,7 @@ package dev.d1s.wot.server.converter.dto.webhook
 
 import dev.d1s.teabag.dto.DtoConverter
 import dev.d1s.teabag.stdlib.collection.mapToMutableList
-import dev.d1s.wot.server.dto.webhook.WebhookUpsertDto
+import dev.d1s.wot.commons.dto.webhook.WebhookUpsertDto
 import dev.d1s.wot.server.entity.webhook.Webhook
 import dev.d1s.wot.server.service.TargetService
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,10 +32,11 @@ class WebhookUpsertDtoConverter : DtoConverter<WebhookUpsertDto, Webhook> {
 
     override fun convertToEntity(dto: WebhookUpsertDto) = dto.run {
         Webhook(
-            dto.name,
-            dto.botToken,
-            dto.private,
-            dto.targets.mapToMutableList {
+            name,
+            botToken,
+            private,
+            available,
+            targets.mapToMutableList {
                 val (target, _) = targetService.getTarget(it)
                 target
             }

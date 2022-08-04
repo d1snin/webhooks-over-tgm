@@ -17,10 +17,10 @@
 package dev.d1s.wot.server.converter.textSource.impl
 
 import dev.d1s.advice.exception.BadRequestException
-import dev.d1s.wot.server.constant.TEXT_LINK_MARKDOWN_REGEX
+import dev.d1s.wot.commons.constant.TEXT_LINK_MARKDOWN_REGEX
 import dev.d1s.wot.server.converter.textSource.TextSourceConverter
-import dev.d1s.wot.server.entity.content.FormattedTextSource
-import dev.d1s.wot.server.entity.content.FormattedTextSourceType
+import dev.d1s.wot.commons.entity.content.FormattedTextSource
+import dev.d1s.wot.commons.entity.content.FormattedTextSourceType
 import dev.inmo.tgbotapi.types.message.textsources.*
 import dev.inmo.tgbotapi.utils.RiskFeature
 import org.springframework.stereotype.Component

@@ -20,6 +20,7 @@ plugins {
     id("org.springframework.boot")
     id("io.spring.dependency-management")
     id("com.gorylenko.gradle-git-properties")
+    kotlin("jvm")
     kotlin("plugin.spring")
     kotlin("plugin.jpa")
 }
@@ -65,14 +66,13 @@ dependencies {
 }
 
 configurations["implementation"].exclude(
-    "org.springframework.boot",
-    "spring-boot-starter-tomcat"
+    "org.springframework.boot", "spring-boot-starter-tomcat"
 )
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict", "-opt-in=kotlin.RequiresOptIn")
         jvmTarget = "17"
+        freeCompilerArgs = freeCompilerArgs + listOf("-Xjsr305=strict", "-opt-in=kotlin.RequiresOptIn")
     }
 }
 

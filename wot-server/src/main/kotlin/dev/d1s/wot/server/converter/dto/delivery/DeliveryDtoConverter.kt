@@ -17,7 +17,7 @@
 package dev.d1s.wot.server.converter.dto.delivery
 
 import dev.d1s.teabag.dto.DtoConverter
-import dev.d1s.wot.server.dto.delivery.DeliveryDto
+import dev.d1s.wot.commons.dto.delivery.DeliveryDto
 import dev.d1s.wot.server.entity.delivery.Delivery
 import org.springframework.stereotype.Component
 

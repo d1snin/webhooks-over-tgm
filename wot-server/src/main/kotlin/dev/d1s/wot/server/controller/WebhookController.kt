@@ -16,9 +16,9 @@
 
 package dev.d1s.wot.server.controller
 
-import dev.d1s.wot.server.constant.*
-import dev.d1s.wot.server.dto.webhook.WebhookDto
-import dev.d1s.wot.server.dto.webhook.WebhookUpsertDto
+import dev.d1s.wot.commons.constant.*
+import dev.d1s.wot.commons.dto.webhook.WebhookDto
+import dev.d1s.wot.commons.dto.webhook.WebhookUpsertDto
 import dev.d1s.wot.server.entity.webhook.WebhookNonce
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated

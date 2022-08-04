@@ -18,18 +18,17 @@ package dev.d1s.wot.server.service.impl
 
 import dev.d1s.advice.exception.UnprocessableEntityException
 import dev.d1s.advice.util.orElseNotFound
+import dev.d1s.lp.commons.event.data.EntityUpdatedEventData
 import dev.d1s.lp.server.publisher.AsyncLongPollingEventPublisher
 import dev.d1s.teabag.dto.DtoConverter
-import dev.d1s.teabag.dto.DtoListConverterFacade
 import dev.d1s.teabag.dto.EntityWithDto
 import dev.d1s.teabag.dto.EntityWithDtoList
 import dev.d1s.teabag.dto.util.convertToDtoIf
 import dev.d1s.teabag.dto.util.convertToDtoListIf
-import dev.d1s.teabag.dto.util.converterForList
-import dev.d1s.wot.server.constant.TARGET_CREATED_GROUP
-import dev.d1s.wot.server.constant.TARGET_DELETED_GROUP
-import dev.d1s.wot.server.constant.TARGET_UPDATED_GROUP
-import dev.d1s.wot.server.dto.target.TargetDto
+import dev.d1s.wot.commons.constant.TARGET_CREATED_GROUP
+import dev.d1s.wot.commons.constant.TARGET_DELETED_GROUP
+import dev.d1s.wot.commons.constant.TARGET_UPDATED_GROUP
+import dev.d1s.wot.commons.dto.target.TargetDto
 import dev.d1s.wot.server.entity.target.Target
 import dev.d1s.wot.server.repository.TargetRepository
 import dev.d1s.wot.server.service.TargetService
@@ -55,10 +54,6 @@ class TargetServiceImpl : TargetService {
     @set:Autowired
     lateinit var targetServiceImpl: TargetServiceImpl
 
-    val targetListDtoConverter: DtoListConverterFacade<TargetDto, Target> by lazy {
-        targetDtoConverter.converterForList()
-    }
-
     val log = logging()
 
     @Transactional
@@ -78,37 +73,32 @@ class TargetServiceImpl : TargetService {
         val targetDto = targetDtoConverter.convertToDto(savedTarget)
 
         publisher.publish(
-            TARGET_CREATED_GROUP,
-            requireNotNull(savedTarget.id),
-            targetDto
+            TARGET_CREATED_GROUP, requireNotNull(savedTarget.id), targetDto
         )
 
         return savedTarget to targetDto
     }
 
     @Transactional
-    override fun createOrGetTargetForChar(chatId: String): Target =
-        targetRepository.findTargetByChatId(chatId).orElse(
-            targetRepository.save(
-                Target(
-                    chatId,
-                    true,
-                )
+    override fun createOrGetTargetForChar(chatId: String): Target = targetRepository.findTargetByChatId(chatId).orElse(
+        targetRepository.save(
+            Target(
+                chatId,
+                true,
             )
         )
+    )
 
     @Transactional(readOnly = true)
     override fun getTarget(id: String, requireDto: Boolean): EntityWithDto<Target, TargetDto> {
-        val target = targetRepository.findTargetByIdOrChatId(id)
-            .orElseNotFound(NOT_FOUND_MESSAGE)
+        val target = targetRepository.findTargetByIdOrChatId(id).orElseNotFound(NOT_FOUND_MESSAGE)
 
         return target to targetDtoConverter.convertToDtoIf(target, requireDto)
     }
 
     @Transactional(readOnly = true)
     override fun getTargetByChatId(chatId: String, requireDto: Boolean): EntityWithDto<Target, TargetDto> {
-        val target = targetRepository.findTargetByChatId(chatId)
-            .orElseNotFound(NOT_FOUND_MESSAGE)
+        val target = targetRepository.findTargetByChatId(chatId).orElseNotFound(NOT_FOUND_MESSAGE)
 
         return target to targetDtoConverter.convertToDtoIf(target, requireDto)
     }
@@ -117,7 +107,7 @@ class TargetServiceImpl : TargetService {
     override fun getAllTargets(requireDto: Boolean): EntityWithDtoList<Target, TargetDto> {
         val targets = targetRepository.findAll()
 
-        return targets to targetListDtoConverter.convertToDtoListIf(targets, requireDto)
+        return targets to targetDtoConverter.convertToDtoListIf(targets, requireDto)
     }
 
     @Transactional
@@ -126,7 +116,7 @@ class TargetServiceImpl : TargetService {
             "Updating target $id with new data $target."
         }
 
-        val (existingTarget, _) = targetServiceImpl.getTarget(id)
+        val (existingTarget, existingTargetDto) = targetServiceImpl.getTarget(id, true)
 
         val chatId = target.chatId
 
@@ -146,7 +136,7 @@ class TargetServiceImpl : TargetService {
         publisher.publish(
             TARGET_UPDATED_GROUP,
             requireNotNull(existingTarget.id),
-            targetDto
+            EntityUpdatedEventData(requireNotNull(existingTargetDto), targetDto)
         )
 
         return savedTarget to targetDto
@@ -167,9 +157,7 @@ class TargetServiceImpl : TargetService {
         }
 
         publisher.publish(
-            TARGET_DELETED_GROUP,
-            requireNotNull(existingTarget.id),
-            targetDto
+            TARGET_DELETED_GROUP, requireNotNull(existingTarget.id), targetDto
         )
     }
 
