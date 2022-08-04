@@ -26,7 +26,7 @@ services:
       - db-data-postgres-config:/var/lib/postgresql/dataConfig
 
   wot-server:
-    image: wot-server:0.1.0-beta.0
+    image: wot-server:1.1.0
     container_name: wot-server
     networks:
       - wot-net
