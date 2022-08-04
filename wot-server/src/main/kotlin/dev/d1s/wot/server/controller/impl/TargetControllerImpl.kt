@@ -18,12 +18,10 @@ package dev.d1s.wot.server.controller.impl
 
 import dev.d1s.security.configuration.annotation.Secured
 import dev.d1s.teabag.dto.DtoConverter
-import dev.d1s.teabag.web.buildFromCurrentRequest
-import dev.d1s.teabag.web.configureScheme
-import dev.d1s.teabag.web.properties.HttpConfigurationProperties
+import dev.d1s.teabag.web.LocationFactory
+import dev.d1s.wot.commons.dto.target.TargetDto
+import dev.d1s.wot.commons.dto.target.TargetUpsertDto
 import dev.d1s.wot.server.controller.TargetController
-import dev.d1s.wot.server.dto.target.TargetDto
-import dev.d1s.wot.server.dto.target.TargetUpsertDto
 import dev.d1s.wot.server.entity.target.Target
 import dev.d1s.wot.server.service.TargetService
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,22 +39,18 @@ class TargetControllerImpl : TargetController {
     lateinit var targetUpsertDtoConverter: DtoConverter<TargetUpsertDto, Target>
 
     @set:Autowired
-    lateinit var httpConfigurationProperties: HttpConfigurationProperties
+    lateinit var locationFactory: LocationFactory
 
     @Secured
     override fun postTarget(targetUpsertDto: TargetUpsertDto): ResponseEntity<TargetDto> {
-        val (_, targetDto) = targetService.createTarget(
+        val (target, targetDto) = targetService.createTarget(
             targetUpsertDtoConverter.convertToEntity(targetUpsertDto)
         )
 
         requireNotNull(targetDto)
 
         return created(
-            buildFromCurrentRequest {
-                configureScheme(httpConfigurationProperties)
-                path("/${targetDto.id}")
-                build().toUri()
-            }
+            locationFactory.newLocation(target)
         ).body(targetDto)
     }
 
@@ -77,8 +71,7 @@ class TargetControllerImpl : TargetController {
     @Secured
     override fun putTarget(id: String, targetUpsertDto: TargetUpsertDto): ResponseEntity<TargetDto> {
         val (_, targetDto) = targetService.updateTarget(
-            id,
-            targetUpsertDtoConverter.convertToEntity(targetUpsertDto)
+            id, targetUpsertDtoConverter.convertToEntity(targetUpsertDto)
         )
 
         return ok(targetDto)

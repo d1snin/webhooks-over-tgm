@@ -17,9 +17,9 @@
 package dev.d1s.wot.server.behaviour.impl
 
 import dev.d1s.wot.server.behaviour.Behaviour
-import dev.d1s.wot.server.constant.START_COMMAND
-import dev.d1s.wot.server.constant.SUBSCRIBE_COMMAND
-import dev.d1s.wot.server.constant.UNSUBSCRIBE_COMMAND
+import dev.d1s.wot.commons.constant.START_COMMAND
+import dev.d1s.wot.commons.constant.SUBSCRIBE_COMMAND
+import dev.d1s.wot.commons.constant.UNSUBSCRIBE_COMMAND
 import dev.d1s.wot.server.entity.webhook.Webhook
 import dev.inmo.tgbotapi.extensions.api.send.sendMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext

@@ -18,13 +18,11 @@ package dev.d1s.wot.server.controller.impl
 
 import dev.d1s.security.configuration.annotation.Secured
 import dev.d1s.teabag.dto.DtoConverter
-import dev.d1s.teabag.web.buildFromCurrentRequest
-import dev.d1s.teabag.web.configureScheme
-import dev.d1s.teabag.web.properties.HttpConfigurationProperties
+import dev.d1s.teabag.web.LocationFactory
+import dev.d1s.wot.commons.dto.delivery.DeliveryCreationDto
+import dev.d1s.wot.commons.dto.delivery.DeliveryDto
+import dev.d1s.wot.commons.dto.delivery.PublicDeliveryCreationDto
 import dev.d1s.wot.server.controller.DeliveryController
-import dev.d1s.wot.server.dto.delivery.DeliveryCreationDto
-import dev.d1s.wot.server.dto.delivery.DeliveryDto
-import dev.d1s.wot.server.dto.delivery.PublicDeliveryCreationDto
 import dev.d1s.wot.server.entity.delivery.Delivery
 import dev.d1s.wot.server.service.DeliveryService
 import dev.d1s.wot.server.service.WebhookService
@@ -48,11 +46,11 @@ class DeliveryControllerImpl : DeliveryController {
     lateinit var deliveryCreationDtoConverter: DtoConverter<DeliveryCreationDto, Delivery>
 
     @set:Autowired
-    lateinit var httpConfigurationProperties: HttpConfigurationProperties
+    lateinit var locationFactory: LocationFactory
 
     @Secured
     override fun postDelivery(deliveryCreationDto: DeliveryCreationDto): ResponseEntity<DeliveryDto> {
-        val (_, deliveryDto) = runBlocking {
+        val (delivery, deliveryDto) = runBlocking {
             deliveryService.createDelivery(
                 deliveryCreationDtoConverter.convertToEntity(deliveryCreationDto)
             )
@@ -61,11 +59,7 @@ class DeliveryControllerImpl : DeliveryController {
         requireNotNull(deliveryDto)
 
         return created(
-            buildFromCurrentRequest {
-                configureScheme(httpConfigurationProperties)
-                path("/$deliveryDto")
-                build().toUri()
-            }
+            locationFactory.newLocation(delivery)
         ).body(deliveryDto)
     }
 

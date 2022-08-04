@@ -16,9 +16,9 @@
 
 package dev.d1s.wot.server.configurer.impl
 
+import dev.d1s.wot.commons.constant.*
 import dev.d1s.wot.server.behaviour.builder.BehaviourBuilder
 import dev.d1s.wot.server.configurer.TelegramBotConfigurer
-import dev.d1s.wot.server.constant.*
 import dev.d1s.wot.server.entity.webhook.Webhook
 import dev.inmo.tgbotapi.bot.TelegramBot
 import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands

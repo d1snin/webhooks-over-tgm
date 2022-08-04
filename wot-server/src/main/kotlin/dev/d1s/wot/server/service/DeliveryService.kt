@@ -18,7 +18,7 @@ package dev.d1s.wot.server.service
 
 import dev.d1s.teabag.dto.EntityWithDto
 import dev.d1s.teabag.dto.EntityWithDtoList
-import dev.d1s.wot.server.dto.delivery.DeliveryDto
+import dev.d1s.wot.commons.dto.delivery.DeliveryDto
 import dev.d1s.wot.server.entity.delivery.Delivery
 
 interface DeliveryService {

@@ -18,7 +18,7 @@ package dev.d1s.wot.server.service
 
 import dev.d1s.teabag.dto.EntityWithDto
 import dev.d1s.teabag.dto.EntityWithDtoList
-import dev.d1s.wot.server.dto.target.TargetDto
+import dev.d1s.wot.commons.dto.target.TargetDto
 import dev.d1s.wot.server.entity.target.Target
 
 interface TargetService {

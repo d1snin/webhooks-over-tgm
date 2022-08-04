@@ -17,7 +17,7 @@
 package dev.d1s.wot.server.configuration
 
 import dev.d1s.lp.server.configurer.LongPollingServerConfigurer
-import dev.d1s.wot.server.constant.*
+import dev.d1s.wot.commons.constant.*
 import org.springframework.context.annotation.Configuration
 
 @Configuration

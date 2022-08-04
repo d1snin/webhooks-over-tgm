@@ -24,7 +24,7 @@ allprojects {
     }
 
     group = "dev.d1s"
-    version = "0.1.0-beta.0"
+    version = "1.0.0"
 
     repositories {
         mavenCentral()
@@ -34,19 +34,5 @@ allprojects {
     dependencies {
         implementation(kotlin("reflect"))
         implementation(kotlin("stdlib"))
-    }
-
-    tasks.withType<Test> {
-        useJUnitPlatform()
-
-        testLogging {
-            events.addAll(
-                listOf(
-                    org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED,
-                    org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED,
-                    org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
-                )
-            )
-        }
     }
 }

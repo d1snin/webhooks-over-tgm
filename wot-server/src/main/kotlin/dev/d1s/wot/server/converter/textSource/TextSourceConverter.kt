@@ -16,7 +16,7 @@
 
 package dev.d1s.wot.server.converter.textSource
 
-import dev.d1s.wot.server.entity.content.FormattedTextSource
+import dev.d1s.wot.commons.entity.content.FormattedTextSource
 import dev.inmo.tgbotapi.types.message.textsources.TextSource
 
 interface TextSourceConverter {

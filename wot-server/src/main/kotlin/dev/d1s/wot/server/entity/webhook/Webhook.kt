@@ -35,6 +35,9 @@ data class Webhook(
     @Column(nullable = false)
     var private: Boolean,
 
+    @Column(nullable = false)
+    var available: Boolean,
+
     @ManyToMany(cascade = [CascadeType.PERSIST])
     @JoinTable(
         name = "webhook_target",
@@ -62,6 +65,7 @@ data class Webhook(
         if (nonce != other.nonce) return false
         if (botToken != other.botToken) return false
         if (private != other.private) return false
+        if (available != other.available) return false
 
         return true
     }
@@ -72,6 +76,7 @@ data class Webhook(
         result = 31 * result + nonce.hashCode()
         result = 31 * result + botToken.hashCode()
         result = 31 * result + private.hashCode()
+        result = 31 * result + available.hashCode()
         return result
     }
 
@@ -81,6 +86,7 @@ data class Webhook(
         "nonce='$nonce', " +
         "botToken='$botToken', " +
         "private=$private, " +
+        "available=$available, " +
         "targets=${targets.mapToIdList()}, " +
         "deliveries=${deliveries.mapToIdList()})"
 }
