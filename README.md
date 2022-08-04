@@ -24,7 +24,7 @@ Just like in Discord or Slack. You simply `POST` a message to chats:
 - Multiple webhooks support
 - Formatting support
 - Attachments support ***(WIP)***
-- Multiplatform Kotlin SDK for WoT ***(WIP)***
+- [Kotlin SDK for WoT](./wot-client)
 - Automatic payload mapping from other services ***(WIP)***
 - Supervisor Bot that simplifies interactions with the API ***(WIP)***
 
