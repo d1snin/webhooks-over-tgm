@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker-compose -f ./wot-server/docker/docker-compose.yml down

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+docker-compose -f ./wot-server/docker/docker-compose.yml down
+./gradlew wot-server:publishImageToLocalRegistry
+docker-compose -f ./wot-server/docker/docker-compose.yml up
