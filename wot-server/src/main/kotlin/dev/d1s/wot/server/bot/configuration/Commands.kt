@@ -20,18 +20,19 @@ import dev.d1s.wot.server.bot.command.configureStartCommand
 import dev.d1s.wot.server.bot.command.configureSubscribeCommand
 import dev.d1s.wot.server.bot.command.configureUnsubscribeCommand
 import dev.d1s.wot.server.constant.*
+import dev.d1s.wot.server.entity.Webhook
 import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.types.BotCommand
 
-suspend fun BehaviourContext.configureCommands() {
+suspend fun BehaviourContext.configureCommands(associatedWebhook: Webhook) {
     setMyCommands(
         BotCommand(START_COMMAND, START_COMMAND_DESCRIPTION),
         BotCommand(SUBSCRIBE_COMMAND, SUBSCRIBE_COMMAND_DESCRIPTION),
         BotCommand(UNSUBSCRIBE_COMMAND, UNSUBSCRIBE_COMMAND_DESCRIPTION)
     )
 
-    configureStartCommand()
-    configureSubscribeCommand()
-    configureUnsubscribeCommand()
+    configureStartCommand(associatedWebhook)
+    configureSubscribeCommand(associatedWebhook)
+    configureUnsubscribeCommand(associatedWebhook)
 }

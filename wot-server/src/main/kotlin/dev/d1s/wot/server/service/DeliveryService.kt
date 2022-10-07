@@ -26,7 +26,7 @@ import dev.d1s.teabag.ktorm.DEFAULT_LIMIT
 import dev.d1s.teabag.ktorm.DEFAULT_OFFSET
 import dev.d1s.teabag.stdlib.exception.EntityNotFoundException
 import dev.d1s.wot.commons.dto.delivery.DeliveryDto
-import dev.d1s.wot.server.bot.factory.getTelegramBot
+import dev.d1s.wot.server.bot.factory.TelegramBotFactory
 import dev.d1s.wot.server.entity.Delivery
 import dev.d1s.wot.server.exception.DeliverySendingFailedException
 import dev.d1s.wot.server.exception.InvalidContentException
@@ -72,6 +72,8 @@ class DeliveryServiceImpl : DeliveryService {
 
     private val deliveryDtoConverter by injecting<DtoConverter<DeliveryDto, Delivery>>()
 
+    private val telegramBotFactory by injecting<TelegramBotFactory>()
+
     override suspend fun createDelivery(delivery: Delivery): EntityWithDto<Delivery, DeliveryDto> {
         log.d {
             "Creating delivery $delivery"
@@ -81,7 +83,7 @@ class DeliveryServiceImpl : DeliveryService {
 
         webhookService.checkWebhookAvailability(webhook)
 
-        val bot = getTelegramBot(webhook)
+        val bot = telegramBotFactory.getTelegramBot(webhook)
 
         log.d {
             "Publishing messages for targets"

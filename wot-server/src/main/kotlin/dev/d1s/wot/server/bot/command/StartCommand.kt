@@ -16,8 +16,33 @@
 
 package dev.d1s.wot.server.bot.command
 
+import dev.d1s.wot.server.constant.START_COMMAND
+import dev.d1s.wot.server.constant.SUBSCRIBE_COMMAND
+import dev.d1s.wot.server.constant.UNSUBSCRIBE_COMMAND
+import dev.d1s.wot.server.entity.Webhook
+import dev.inmo.tgbotapi.extensions.api.send.sendMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
+import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
+import dev.inmo.tgbotapi.extensions.utils.formatting.botCommand
+import dev.inmo.tgbotapi.extensions.utils.formatting.buildEntities
+import org.lighthousegames.logging.logging
 
-fun BehaviourContext.configureStartCommand() {
-    // todo
+private val log = logging()
+
+suspend fun BehaviourContext.configureStartCommand(associatedWebhook: Webhook) {
+    onCommand(START_COMMAND) {
+        log.d {
+            "Handled $START_COMMAND. Webhook: $associatedWebhook."
+        }
+
+        sendMessage(
+            it.chat,
+            buildEntities {
+                +"Hi, here you can subscribe or unsubscribe from messages. Send me " +
+                        botCommand(SUBSCRIBE_COMMAND) +
+                        " or " +
+                        botCommand(UNSUBSCRIBE_COMMAND) +
+                        "."
+            })
+    }
 }

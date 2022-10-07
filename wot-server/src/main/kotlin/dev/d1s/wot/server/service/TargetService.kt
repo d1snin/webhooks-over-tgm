@@ -33,6 +33,7 @@ import dev.d1s.wot.server.entity.Webhook
 import dev.d1s.wot.server.entity.WebhookTarget
 import dev.d1s.wot.server.repository.TargetRepository
 import dev.d1s.wot.server.repository.WebhookTargetRepository
+import dev.d1s.wot.server.util.idString
 import dev.inmo.tgbotapi.types.chat.Chat
 import dispatch.core.withIO
 import org.lighthousegames.logging.logging
@@ -98,7 +99,7 @@ class TargetServiceImpl : TargetService {
     }
 
     override suspend fun createOrGetTargetForChat(chat: Chat): Target =
-        targetRepository.findTargetByChatId(chat.id.chatId.toString()) ?: createTarget(
+        targetRepository.findTargetByChatId(chat.idString) ?: createTarget(
             Target {
                 this.chatId = chatId
                 this.available = true

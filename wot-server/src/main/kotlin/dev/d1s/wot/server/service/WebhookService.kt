@@ -29,12 +29,14 @@ import dev.d1s.teabag.stdlib.exception.EntityNotFoundException
 import dev.d1s.wot.commons.dto.webhook.WebhookDto
 import dev.d1s.wot.commons.entity.webhook.WebhookNonce
 import dev.d1s.wot.commons.entity.webhook.WebhookState
+import dev.d1s.wot.server.bot.factory.TelegramBotFactory
 import dev.d1s.wot.server.entity.Target
 import dev.d1s.wot.server.entity.Webhook
 import dev.d1s.wot.server.entity.WebhookTarget
 import dev.d1s.wot.server.exception.UnavailableWebhookException
 import dev.d1s.wot.server.repository.WebhookRepository
 import dev.d1s.wot.server.repository.WebhookTargetRepository
+import dev.d1s.wot.server.util.idString
 import dev.inmo.tgbotapi.types.chat.Chat
 import org.lighthousegames.logging.logging
 import java.util.concurrent.ThreadLocalRandom
@@ -87,12 +89,16 @@ class WebhookServiceImpl : WebhookService {
 
     private val targetService by injecting<TargetService>()
 
+    private val telegramBotFactory by injecting<TelegramBotFactory>()
+
     override suspend fun createWebhook(webhook: Webhook): EntityWithDto<Webhook, WebhookDto> {
         log.d {
             "Creating webhook $webhook"
         }
 
         webhook.nonce = createNonce().nonce
+
+        telegramBotFactory.getTelegramBot(webhook)
 
         handlePsqlUniqueViolationOrThrow {
             webhookRepository.add(webhook)
@@ -157,6 +163,8 @@ class WebhookServiceImpl : WebhookService {
 
         val (webhook, _) = this.getWebhook(id)
 
+        telegramBotFactory.stopTelegramBot(webhook)
+
         webhook.delete()
     }
 
@@ -207,7 +215,7 @@ class WebhookServiceImpl : WebhookService {
             "Unsubscribing $chat from webhook $webhook."
         }
 
-        val (target, _) = targetService.getTarget(chat.id.chatId.toString())
+        val (target, _) = targetService.getTarget(chat.idString)
 
         webhookTargetRepository.deleteWebhookTarget(webhook, target) ?: throw EntityNotFoundException()
 
@@ -218,7 +226,7 @@ class WebhookServiceImpl : WebhookService {
 
     override suspend fun isSubscribed(webhook: Webhook, chat: Chat): Boolean =
         webhookTargetRepository.findWebhookTargetsByWebhookId(webhook.id).find {
-            it.target.chatId == chat.id.chatId.toString()
+            it.target.chatId == chat.idString
         } != null
 
     override suspend fun hasAccess(chat: Chat, to: Webhook): Boolean =

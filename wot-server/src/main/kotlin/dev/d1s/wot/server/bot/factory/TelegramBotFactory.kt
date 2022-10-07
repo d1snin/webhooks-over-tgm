@@ -16,6 +16,7 @@
 
 package dev.d1s.wot.server.bot.factory
 
+import cc.popkorn.annotations.Injectable
 import dev.d1s.wot.server.bot.configuration.configureCommands
 import dev.d1s.wot.server.entity.StartedTelegramBot
 import dev.d1s.wot.server.entity.Webhook
@@ -27,49 +28,60 @@ import kotlinx.coroutines.runBlocking
 import org.lighthousegames.logging.logging
 import java.util.concurrent.ConcurrentHashMap
 
-private val log = logging()
+interface TelegramBotFactory {
 
-private val telegramBotCache = ConcurrentHashMap<Webhook, StartedTelegramBot>()
+    fun getTelegramBot(webhook: Webhook): StartedTelegramBot
 
-fun getTelegramBot(webhook: Webhook): StartedTelegramBot {
-    log.d {
-        "Getting TelegramBot for webhook $webhook"
-    }
-
-    telegramBotCache[webhook]?.let {
-        return it
-    }
-
-    val bot = telegramBot(webhook.botToken)
-
-    return runBlocking {
-        try {
-            val job = bot.buildBehaviourWithLongPolling {
-                configureCommands()
-            }
-
-            StartedTelegramBot(bot, job).also {
-                telegramBotCache[webhook] = it
-
-                log.d {
-                    "Created and started TelegramBot for webhook $webhook"
-                }
-            }
-        } catch (e: RequestException) {
-            throw TelegramBotStartFailedException(e)
-        }
-    }
+    fun stopTelegramBot(webhook: Webhook)
 }
 
-fun stopTelegramBot(webhook: Webhook) {
-    log.d {
-        "Dememoizing and stopping TelegramBot for webhook $webhook"
+@Injectable
+class TelegramBotFactoryImpl : TelegramBotFactory {
+
+    private val log = logging()
+
+    private val telegramBotCache = ConcurrentHashMap<Webhook, StartedTelegramBot>()
+
+    override fun getTelegramBot(webhook: Webhook): StartedTelegramBot {
+        log.d {
+            "Getting TelegramBot for webhook $webhook"
+        }
+
+        telegramBotCache[webhook]?.let {
+            return it
+        }
+
+        val bot = telegramBot(webhook.botToken)
+
+        return runBlocking {
+            try {
+                val job = bot.buildBehaviourWithLongPolling {
+                    configureCommands(webhook)
+                }
+
+                StartedTelegramBot(bot, job).also {
+                    telegramBotCache[webhook] = it
+
+                    log.d {
+                        "Created and started TelegramBot for webhook $webhook"
+                    }
+                }
+            } catch (e: RequestException) {
+                throw TelegramBotStartFailedException(e)
+            }
+        }
     }
 
-    val startedBot = telegramBotCache[webhook] ?: error("No running bot for webhook $webhook")
+    override fun stopTelegramBot(webhook: Webhook) {
+        log.d {
+            "Dememoizing and stopping TelegramBot for webhook $webhook"
+        }
 
-    startedBot.run {
-        bot.close()
-        job.cancel()
+        val startedBot = telegramBotCache[webhook] ?: error("No running bot for webhook $webhook")
+
+        startedBot.run {
+            bot.close()
+            job.cancel()
+        }
     }
 }

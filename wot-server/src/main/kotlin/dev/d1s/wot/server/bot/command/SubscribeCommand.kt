@@ -16,8 +16,70 @@
 
 package dev.d1s.wot.server.bot.command
 
+import cc.popkorn.injecting
+import dev.d1s.wot.server.constant.SUBSCRIBE_COMMAND
+import dev.d1s.wot.server.entity.Webhook
+import dev.d1s.wot.server.service.WebhookService
+import dev.d1s.wot.server.util.checkPrivateChat
+import dev.d1s.wot.server.util.safe
+import dev.inmo.tgbotapi.extensions.api.send.reply
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
+import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitTextMessage
+import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
+import io.ktor.http.*
+import kotlinx.coroutines.flow.first
+import org.lighthousegames.logging.logging
 
-fun BehaviourContext.configureSubscribeCommand() {
-    // todo
+private val webhookService by injecting<WebhookService>()
+
+private val log = logging()
+
+suspend fun BehaviourContext.configureSubscribeCommand(associatedWebhook: Webhook) {
+    onCommand(SUBSCRIBE_COMMAND) { message ->
+        log.d {
+            "Handled $SUBSCRIBE_COMMAND. Webhook: $associatedWebhook."
+        }
+
+        val chat = message.chat
+
+        if (!checkPrivateChat(message)) {
+            return@onCommand
+        }
+
+        if (!webhookService.hasAccess(chat, associatedWebhook)) {
+            reply(
+                message,
+                "This webhook is private. Please send me a nonce of the webhook. " +
+                        "You can also send a webhook URL containing a nonce."
+            )
+
+            val textMessage = waitTextMessage().first()
+
+            val content = textMessage.content.text
+
+            val nonce = associatedWebhook.nonce
+
+            if (
+                content == nonce || try {
+                    URLBuilder(content).pathSegments.firstOrNull()?.equals(nonce) == true
+                } catch (_: Exception) {
+                    false
+                }
+            ) {
+                safe(message) {
+                    webhookService.subscribe(associatedWebhook, chat).also {
+                        reply(message, "You are successfully authorized and subscribed!")
+                    }
+                }
+            } else {
+                reply(textMessage, "Invalid nonce provided.")
+            }
+        } else {
+            safe(message) {
+                webhookService.subscribe(associatedWebhook, chat).also {
+                    reply(message, "You are successfully subscribed!")
+                }
+            }
+        }
+    }
 }
