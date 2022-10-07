@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-rootProject.name = "webhooks-over-tgm"
+package dev.d1s.wot.server.entity
 
-pluginManagement {
-    plugins {
-        val kotlinVersion: String by settings
-        val ktorVersion: String by settings
+import dev.inmo.tgbotapi.bot.TelegramBot
+import kotlinx.coroutines.Job
 
-        kotlin("jvm") version kotlinVersion
-        kotlin("kapt") version kotlinVersion
-        id("io.ktor.plugin") version ktorVersion
-    }
-}
-
-include("wot-client", "wot-commons", "wot-server")
+data class StartedTelegramBot(
+    val bot: TelegramBot,
+    val job: Job
+)

@@ -14,17 +14,6 @@
  * limitations under the License.
  */
 
-rootProject.name = "webhooks-over-tgm"
+package dev.d1s.wot.server.exception
 
-pluginManagement {
-    plugins {
-        val kotlinVersion: String by settings
-        val ktorVersion: String by settings
-
-        kotlin("jvm") version kotlinVersion
-        kotlin("kapt") version kotlinVersion
-        id("io.ktor.plugin") version ktorVersion
-    }
-}
-
-include("wot-client", "wot-commons", "wot-server")
+class DeliverySendingFailedException : RuntimeException()

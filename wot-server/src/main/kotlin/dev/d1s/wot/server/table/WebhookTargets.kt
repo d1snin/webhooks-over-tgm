@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-rootProject.name = "webhooks-over-tgm"
+package dev.d1s.wot.server.table
 
-pluginManagement {
-    plugins {
-        val kotlinVersion: String by settings
-        val ktorVersion: String by settings
+import dev.d1s.wot.server.entity.WebhookTarget
+import org.ktorm.schema.Table
+import org.ktorm.schema.text
 
-        kotlin("jvm") version kotlinVersion
-        kotlin("kapt") version kotlinVersion
-        id("io.ktor.plugin") version ktorVersion
+object WebhookTargets : Table<WebhookTarget>("webhook_target") {
+
+    val webhookId = text("webhook_id").references(Webhooks) {
+        it.webhook
+    }
+
+    val targetId = text("target_id").references(Targets) {
+        it.target
     }
 }
-
-include("wot-client", "wot-commons", "wot-server")

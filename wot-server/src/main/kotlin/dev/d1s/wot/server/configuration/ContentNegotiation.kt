@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-rootProject.name = "webhooks-over-tgm"
+package dev.d1s.wot.server.configuration
 
-pluginManagement {
-    plugins {
-        val kotlinVersion: String by settings
-        val ktorVersion: String by settings
+import io.ktor.serialization.jackson.*
+import io.ktor.server.application.*
+import io.ktor.server.plugins.contentnegotiation.*
 
-        kotlin("jvm") version kotlinVersion
-        kotlin("kapt") version kotlinVersion
-        id("io.ktor.plugin") version ktorVersion
+fun Application.configureContentNegotiation() {
+    install(ContentNegotiation) {
+        jackson()
     }
 }
-
-include("wot-client", "wot-commons", "wot-server")

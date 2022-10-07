@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-rootProject.name = "webhooks-over-tgm"
+package dev.d1s.wot.server.bot.command
 
-pluginManagement {
-    plugins {
-        val kotlinVersion: String by settings
-        val ktorVersion: String by settings
+import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 
-        kotlin("jvm") version kotlinVersion
-        kotlin("kapt") version kotlinVersion
-        id("io.ktor.plugin") version ktorVersion
-    }
+fun BehaviourContext.configureUnsubscribeCommand() {
+    // todo
 }
-
-include("wot-client", "wot-commons", "wot-server")

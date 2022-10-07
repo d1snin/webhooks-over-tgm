@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-rootProject.name = "webhooks-over-tgm"
+package dev.d1s.wot.server.constant
 
-pluginManagement {
-    plugins {
-        val kotlinVersion: String by settings
-        val ktorVersion: String by settings
+const val START_COMMAND: String = "start"
+const val START_COMMAND_DESCRIPTION: String = "Get usage info."
 
-        kotlin("jvm") version kotlinVersion
-        kotlin("kapt") version kotlinVersion
-        id("io.ktor.plugin") version ktorVersion
-    }
-}
+const val SUBSCRIBE_COMMAND: String = "subscribe"
+const val SUBSCRIBE_COMMAND_DESCRIPTION: String = "Subscribe for messages."
 
-include("wot-client", "wot-commons", "wot-server")
+const val UNSUBSCRIBE_COMMAND: String = "unsubscribe"
+const val UNSUBSCRIBE_COMMAND_DESCRIPTION: String = "Unsubscribe from messages."

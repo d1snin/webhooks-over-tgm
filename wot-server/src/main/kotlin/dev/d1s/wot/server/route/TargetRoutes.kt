@@ -14,17 +14,29 @@
  * limitations under the License.
  */
 
-rootProject.name = "webhooks-over-tgm"
+package dev.d1s.wot.server.route
 
-pluginManagement {
-    plugins {
-        val kotlinVersion: String by settings
-        val ktorVersion: String by settings
+import dev.d1s.wot.commons.const.*
+import io.ktor.server.routing.*
 
-        kotlin("jvm") version kotlinVersion
-        kotlin("kapt") version kotlinVersion
-        id("io.ktor.plugin") version ktorVersion
+fun Route.targetRoutes() {
+    post(POST_TARGET_MAPPING) {
+
+    }
+
+    get(GET_TARGET_MAPPING) {
+
+    }
+
+    get(GET_TARGETS_MAPPING) {
+
+    }
+
+    put(PUT_TARGET_MAPPING) {
+
+    }
+
+    delete(DELETE_TARGET_MAPPING) {
+
     }
 }
-
-include("wot-client", "wot-commons", "wot-server")

@@ -25,8 +25,11 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 dependencies {
     val konformVersion: String by project
+    val teabagsVersion: String by project
 
     api("io.konform:konform:$konformVersion")
+    implementation("dev.d1s.teabags:teabag-konform:$teabagsVersion")
+    implementation("dev.d1s.teabags:teabag-constants:$teabagsVersion")
 }
 
 publishing {

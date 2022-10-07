@@ -14,17 +14,25 @@
  * limitations under the License.
  */
 
-rootProject.name = "webhooks-over-tgm"
+package dev.d1s.wot.server.util.converter.dto
 
-pluginManagement {
-    plugins {
-        val kotlinVersion: String by settings
-        val ktorVersion: String by settings
+import cc.popkorn.annotations.Injectable
+import dev.d1s.teabag.dto.ConverterMetadata
+import dev.d1s.teabag.dto.DtoConverter
+import dev.d1s.teabag.dto.getProperty
+import dev.d1s.wot.commons.dto.target.TargetDto
+import dev.d1s.wot.server.entity.Target
 
-        kotlin("jvm") version kotlinVersion
-        kotlin("kapt") version kotlinVersion
-        id("io.ktor.plugin") version ktorVersion
+@Injectable
+class TargetDtoConverter : DtoConverter<TargetDto, Target> {
+
+    override fun convertToDto(entity: Target, meta: ConverterMetadata) = entity.run {
+        TargetDto(
+            id,
+            createdAt,
+            chatId,
+            available,
+            requireNotNull(meta.getProperty("webhook_ids"))
+        )
     }
 }
-
-include("wot-client", "wot-commons", "wot-server")

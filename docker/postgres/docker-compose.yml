@@ -1,0 +1,25 @@
+version: '3'
+
+volumes:
+  db-data-postgres:
+    driver: local
+
+  db-data-postgres-config:
+    driver: local
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=wot_server_data
+      - POSTGRES_USER=postgres_user
+      - POSTGRES_PASSWORD=postgres_password
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data-postgres:/var/lib/postgresql/data
+      - db-data-postgres-config:/var/lib/postgresql/dataConfig
+      - ./docker-postgresql-multiple-databases:/docker-entrypoint-initdb.d

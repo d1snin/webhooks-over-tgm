@@ -1,0 +1,311 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "0",
+        "author": "d1snin (me@d1s.dev)",
+        "changes": [
+          {
+            "createSequence": {
+              "sequenceName": "system-uuid",
+              "startValue": 1,
+              "incrementBy": 1
+            }
+          },
+          {
+            "createTable": {
+              "tableName": "delivery",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "text",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_delivery_id",
+                      "primaryKey": true,
+                      "primaryKeyName": "pk_delivery_id"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_bot_user_created_at"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "content",
+                    "type": "jsonb",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_bot_user_content"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "successful",
+                    "type": "bool",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_bot_user_successful"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "time",
+                    "type": "timestamp",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_bot_user_time"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "webhook_id",
+                    "type": "text",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_bot_user_webhook_id",
+                      "referencedTableName": "webhook",
+                      "referencedColumnName": "id",
+                      "foreignKeyName": "fk_bot_user_webhook_id"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createTable": {
+              "tableName": "target",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "text",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_target_id",
+                      "primaryKey": true,
+                      "primaryKeyName": "pk_target_id"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_target_created_at"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "chat_id",
+                    "type": "text",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_target_chat_id",
+                      "unique": true,
+                      "uniqueConstraintName": "u_target_chat_id"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "available",
+                    "type": "bool",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_target_available"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createTable": {
+              "tableName": "webhook",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "text",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_webhook_id",
+                      "primaryKey": true,
+                      "primaryKeyName": "pk_webhook_id"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_webhook_created_at"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "name",
+                    "type": "text",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_webhook_name",
+                      "unique": true,
+                      "uniqueConstraintName": "u_webhook_name"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "nonce",
+                    "type": "text",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_webhook_nonce",
+                      "unique": true,
+                      "uniqueConstraintName": "u_webhook_nonce"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "bot_token",
+                    "type": "text",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_webhook_bot_token",
+                      "unique": true,
+                      "uniqueConstraintName": "u_webhook_bot_token"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "private",
+                    "type": "bool",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_webhook_private"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createTable": {
+              "tableName": "webhook_target",
+              "columns": [
+                {
+                  "column": {
+                    "name": "webhook_id",
+                    "type": "text",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_webhook_target_webhook_id",
+                      "referencedTableName": "webhook",
+                      "referencedColumnName": "id",
+                      "foreignKeyName": "fk_webhook_target_webhook_id"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "target_id",
+                    "type": "text",
+                    "constraints": {
+                      "nullable": false,
+                      "notNullConstraintName": "nn_webhook_target_target_id",
+                      "referencedTableName": "target",
+                      "referencedColumnName": "id",
+                      "foreignKeyName": "fk_webhook_target_target_id"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "1",
+        "author": "d1snin (me@d1s.dev)",
+        "changes": [
+          {
+            "addColumn": {
+              "tableName": "webhook",
+              "column": {
+                "name": "available",
+                "type": "bool",
+                "constraints": {
+                  "nullable": false,
+                  "notNullConstraintName": "nn_webhook_available"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "2",
+        "author": "d1snin (me@d1s.dev)",
+        "changes": [
+          {
+            "dropColumn": {
+              "tableName": "webhook",
+              "columnName": "available"
+            }
+          },
+          {
+            "addColumn": {
+              "tableName": "webhook",
+              "column": {
+                "name": "state",
+                "type": "text",
+                "constraints": {
+                  "nullable": false,
+                  "notNullConstraintName": "nn_webhook_state"
+                }
+              }
+            }
+          },
+          {
+            "addColumn": {
+              "tableName": "webhook",
+              "column": {
+                "name": "target_type",
+                "type": "text",
+                "constraints": {
+                  "nullable": false,
+                  "notNullConstraintName": "nn_webhook_target_type"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

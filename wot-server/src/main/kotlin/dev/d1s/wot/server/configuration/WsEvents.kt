@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-rootProject.name = "webhooks-over-tgm"
+package dev.d1s.wot.server.configuration
 
-pluginManagement {
-    plugins {
-        val kotlinVersion: String by settings
-        val ktorVersion: String by settings
+import cc.popkorn.popKorn
+import dev.d1s.ktor.events.server.deployWsEventPublisher
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
 
-        kotlin("jvm") version kotlinVersion
-        kotlin("kapt") version kotlinVersion
-        id("io.ktor.plugin") version ktorVersion
+fun Application.configureWsEvents() {
+    install(WebSockets)
+
+    routing {
+        authenticate {
+            val channel = deployWsEventPublisher()
+            popKorn().addInjectable(channel)
+        }
     }
 }
-
-include("wot-client", "wot-commons", "wot-server")

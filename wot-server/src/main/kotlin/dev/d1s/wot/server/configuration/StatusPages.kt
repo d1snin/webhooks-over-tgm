@@ -16,20 +16,24 @@
 
 package dev.d1s.wot.server.configuration
 
-import dev.d1s.wot.server.route.deliveryRoutes
-import dev.d1s.wot.server.route.targetRoutes
-import dev.d1s.wot.server.route.webhookRoutes
+import dev.d1s.teabag.ktor.server.handleCommonExceptions
+import dev.d1s.wot.server.exception.DeliverySendingFailedException
+import dev.d1s.wot.server.exception.InvalidContentException
+import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
+import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
-import io.ktor.server.routing.*
 
-fun Application.configureRouting() {
-    routing {
-        authenticate {
-            deliveryRoutes()
-            targetRoutes()
-            webhookRoutes()
+fun Application.configureStatusPages() {
+    install(StatusPages) {
+        handleCommonExceptions()
+
+        exception<DeliverySendingFailedException> { call, _ ->
+            call.respond(HttpStatusCode.InternalServerError)
+        }
+
+        exception<InvalidContentException> {call, _ ->
+            call.respond(HttpStatusCode.BadRequest)
         }
     }
 }

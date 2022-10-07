@@ -16,20 +16,29 @@
 
 package dev.d1s.wot.server.configuration
 
-import dev.d1s.wot.server.route.deliveryRoutes
-import dev.d1s.wot.server.route.targetRoutes
-import dev.d1s.wot.server.route.webhookRoutes
+import cc.popkorn.popKorn
+import com.zaxxer.hikari.HikariDataSource
+import dev.d1s.ktor.liquibase.plugin.LiquibaseMigrations
+import dev.d1s.teabag.ktor.server.ext.tryRetrieveDbProperties
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import org.ktorm.database.Database
 
-fun Application.configureRouting() {
-    routing {
-        authenticate {
-            deliveryRoutes()
-            targetRoutes()
-            webhookRoutes()
+fun Application.configureDatabase() {
+    val database = Database.connect(
+        HikariDataSource().apply {
+            environment.config.tryRetrieveDbProperties().let {
+                jdbcUrl = it.url
+                username = it.user
+                password = it.password
+            }
+        }
+    )
+
+    database.useConnection {
+        install(LiquibaseMigrations) {
+            connection = it
         }
     }
+
+    popKorn().addInjectable(database)
 }

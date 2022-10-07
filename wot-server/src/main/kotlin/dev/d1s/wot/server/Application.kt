@@ -16,12 +16,54 @@
 
 package dev.d1s.wot.server
 
+import cc.popkorn.injecting
+import com.typesafe.config.ConfigFactory
+import dev.d1s.ktor.events.server.WsEventPublisher
+import dev.d1s.ktor.events.server.sendWsEvent
+import dev.d1s.wot.server.configuration.*
+import dispatch.core.MainCoroutineScope
+import io.ktor.server.application.*
+import io.ktor.server.config.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import dev.d1s.wot.server.configuration.configureRouting
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.lighthousegames.logging.logging
+
+private val logger = logging()
+
+// todo
+private val cs = MainCoroutineScope()
+private val publisher by injecting<WsEventPublisher>()
 
 fun main() {
-    embeddedServer(Netty, port = 8080) {
-        configureRouting()
-    }.start(wait = true)
+    logger.i {
+        "Starting Webhooks over Telegram server..."
+    }
+
+    embeddedServer(Netty, applicationEngineEnvironment {
+        config = HoconApplicationConfig(ConfigFactory.load())
+
+        module {
+            configureContentNegotiation()
+            configureDatabase()
+            configureRouting()
+            configureSecurity()
+            configureStatusPages()
+            configureWsEvents()
+        }
+
+        connector {
+            port = config.port
+        }
+
+        log.debug("Sending random events...")
+
+        cs.launch {
+            while (true) {
+                publisher.sendWsEvent("thing", "Hello, World!")
+                delay(500)
+            }
+        }
+    }).start(true)
 }

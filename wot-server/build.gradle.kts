@@ -17,6 +17,7 @@
 plugins {
     application
     id("io.ktor.plugin")
+    kotlin("kapt")
 }
 
 val projectGroup: String by project
@@ -31,11 +32,14 @@ application {
 
 repositories {
     mavenCentral()
+    maven(url = "https://jitpack.io")
 }
 
 dependencies {
     val kotlinVersion: String by project
     val ktorVersion: String by project
+    val teabagsVersion: String by project
+    val ktorStaticAuthVersion: String by project
     val logbackVersion: String by project
     val hikariVersion: String by project
     val postgresqlVersion: String by project
@@ -43,9 +47,21 @@ dependencies {
     val tgbotapiVersion: String by project
     val kmLogVersion: String by project
     val liquibaseVersion: String by project
+    val ktorServerLiquibaseVersion: String by project
+    val ktormVersion: String by project
+    val dispatchVersion: String by project
+    val wsEventsVersion: String by project
 
-    implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    implementation(project(":wot-commons"))
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-server-websockets:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+    implementation("dev.d1s.teabags:teabag-ktor-server:$teabagsVersion")
+    implementation("dev.d1s.teabags:teabag-dto:$teabagsVersion")
+    implementation("dev.d1s.teabags:teabag-postgres:$teabagsVersion")
+    implementation("dev.d1s.teabags:teabag-ktorm:$teabagsVersion")
+    implementation("dev.d1s:ktor-static-authentication:$ktorStaticAuthVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("org.postgresql:postgresql:$postgresqlVersion")
@@ -53,8 +69,23 @@ dependencies {
     implementation("dev.inmo:tgbotapi:$tgbotapiVersion")
     implementation("org.lighthousegames:logging:$kmLogVersion")
     implementation("org.liquibase:liquibase-core:$liquibaseVersion")
-    testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
+    implementation("dev.d1s:ktor-server-liquibase:$ktorServerLiquibaseVersion")
+    implementation("org.ktorm:ktorm-core:$ktormVersion")
+    implementation("org.ktorm:ktorm-jackson:$ktormVersion")
+    implementation("com.rickbusarow.dispatch:dispatch-core:$dispatchVersion")
+    implementation("dev.d1s:ktor-ws-events:$wsEventsVersion")
+    implementation("io.ktor:ktor-server-core-jvm:2.1.2")
+    implementation("io.ktor:ktor-server-host-common-jvm:2.1.2")
+    implementation("io.ktor:ktor-server-status-pages-jvm:2.1.2")
+    kapt("cc.popkorn:popkorn-compiler:$popkornVersion")
+    testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+}
+
+tasks.compileKotlin {
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 ktor {

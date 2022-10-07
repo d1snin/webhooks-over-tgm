@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-rootProject.name = "webhooks-over-tgm"
+package dev.d1s.wot.server.entity
 
-pluginManagement {
-    plugins {
-        val kotlinVersion: String by settings
-        val ktorVersion: String by settings
+import org.ktorm.entity.Entity
 
-        kotlin("jvm") version kotlinVersion
-        kotlin("kapt") version kotlinVersion
-        id("io.ktor.plugin") version ktorVersion
-    }
+interface WebhookTarget : Entity<WebhookTarget> {
+
+    var webhook: Webhook
+
+    var target: Target
+
+    companion object : Entity.Factory<WebhookTarget>()
 }
-
-include("wot-client", "wot-commons", "wot-server")
