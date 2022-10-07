@@ -1,6 +1,6 @@
 [![Wakatime](https://wakatime.com/badge/user/e4446807-0aa6-4ba9-92ea-2a7632bc44c9/project/72943875-a7a2-4579-8061-4c30602d6069.svg)](https://wakatime.com/badge/user/e4446807-0aa6-4ba9-92ea-2a7632bc44c9/project/72943875-a7a2-4579-8061-4c30602d6069)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Java CI with Gradle](https://github.com/hole-project/hole/actions/workflows/gradle.yml/badge.svg?branch=main)](https://github.com/hole-project/hole/actions/workflows/gradle.yml)
+[![Java CI with Gradle](https://github.com/d1snin/webhooks-over-tgm/actions/workflows/gradle.yml/badge.svg?branch=main)](https://github.com/d1snin/webhooks-over-tgm/actions/workflows/gradle.yml)
 
 ### Webhooks over Telegram (WoT)
 
