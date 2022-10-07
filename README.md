@@ -4,6 +4,8 @@
 
 ### Webhooks over Telegram (WoT)
 
+> ⚠ **This project is currently being migrated over the new stack. The main branch is completely unstable and which builds are, probably, even not working.**
+
 WoT aims to provide a simple API for registering webhooks and sending messages to Telegram chats via them
 using a single secret URL.
 Just like in Discord or Slack. You simply `POST` a message to chats:
