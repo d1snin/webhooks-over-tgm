@@ -37,7 +37,7 @@ jobs:
       - name: Build wot-server
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
-          arguments: wot-server:bootJar
+          arguments: wot-server:build
       - name: Upload build artifactsa
         uses: actions/upload-artifact@v3.0.0
         with:
