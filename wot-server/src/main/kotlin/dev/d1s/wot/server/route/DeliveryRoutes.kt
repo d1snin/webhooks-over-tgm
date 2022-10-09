@@ -16,27 +16,72 @@
 
 package dev.d1s.wot.server.route
 
+import cc.popkorn.injecting
+import dev.d1s.teabag.dto.DtoConverter
+import dev.d1s.teabag.ktor.server.id
+import dev.d1s.teabag.ktor.server.limitAndOffset
+import dev.d1s.teabag.stdlib.exception.InvalidEntityException
 import dev.d1s.wot.commons.const.*
+import dev.d1s.wot.commons.dto.delivery.DeliveryCreationDto
+import dev.d1s.wot.commons.dto.delivery.PublicDeliveryCreationDto
+import dev.d1s.wot.server.entity.Delivery
+import dev.d1s.wot.server.service.DeliveryService
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.deliveryRoutes() {
-    post(POST_DELIVERY_MAPPING) {
+private val deliveryService by injecting<DeliveryService>()
 
+private val deliveryCreationDtoConverter by injecting<DtoConverter<DeliveryCreationDto, Delivery>>()
+private val publicDeliveryCreationDtoConverter by injecting<DtoConverter<PublicDeliveryCreationDto, Delivery>>()
+
+fun Route.deliveryRoutes() {
+
+    post(POST_DELIVERY_MAPPING) {
+        val deliveryDto = call.receive<DeliveryCreationDto>()
+
+        val delivery = deliveryCreationDtoConverter.convertToEntity(deliveryDto)
+
+        call.respondWithCreatedDelivery(delivery)
     }
 
     post(POST_DELIVERY_PUBLIC_MAPPING) {
+        val deliveryDto = call.receive<PublicDeliveryCreationDto>()
 
+        val delivery = publicDeliveryCreationDtoConverter.convertToEntity(deliveryDto)
+
+        call.respondWithCreatedDelivery(delivery)
     }
 
     get(GET_DELIVERY_MAPPING) {
+        val requestedId = call.parameters.id ?: throw InvalidEntityException()
 
+        val (_, delivery) = deliveryService.getDeliveryById(requestedId, true)
+
+        call.respond(delivery!!)
     }
 
     get(GET_DELIVERIES_MAPPING) {
+        val (limit, offset) = call.request.queryParameters.limitAndOffset
 
+        val (_, deliveries) = deliveryService.getDeliveries(limit, offset, true)
+
+        call.respond(deliveries!!)
     }
 
     delete(DELETE_DELIVERY_MAPPING) {
+        val requestedId = call.parameters.id ?: throw InvalidEntityException()
 
+        deliveryService.deleteDelivery(requestedId)
+
+        call.respond(HttpStatusCode.NoContent)
     }
+}
+
+private suspend fun ApplicationCall.respondWithCreatedDelivery(delivery: Delivery) {
+    val (_, createdDelivery) = deliveryService.createDelivery(delivery)
+
+    this.respond(createdDelivery!!)
 }

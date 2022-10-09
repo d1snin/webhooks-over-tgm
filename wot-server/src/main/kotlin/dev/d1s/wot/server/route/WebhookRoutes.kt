@@ -16,35 +16,90 @@
 
 package dev.d1s.wot.server.route
 
+import cc.popkorn.injecting
+import dev.d1s.teabag.dto.DtoConverter
+import dev.d1s.teabag.ktor.server.id
+import dev.d1s.teabag.ktor.server.limitAndOffset
+import dev.d1s.teabag.stdlib.exception.InvalidEntityException
 import dev.d1s.wot.commons.const.*
+import dev.d1s.wot.commons.dto.webhook.WebhookUpsertDto
+import dev.d1s.wot.server.entity.Webhook
+import dev.d1s.wot.server.service.WebhookService
+import dev.d1s.wot.server.util.webhookNonce
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.webhookRoutes() {
-    post(POST_WEBHOOK_MAPPING) {
+private val webhookService by injecting<WebhookService>()
+private val webhookUpsertDtoConverter by injecting<DtoConverter<WebhookUpsertDto, Webhook>>()
 
+fun Route.webhookRoutes() {
+
+    post(POST_WEBHOOK_MAPPING) {
+        val webhookDto = call.receive<WebhookUpsertDto>()
+
+        val webhook = webhookUpsertDtoConverter.convertToEntity(webhookDto)
+
+        val (_, createdWebhook) = webhookService.createWebhook(webhook)
+
+        call.respond(HttpStatusCode.Created, createdWebhook!!)
     }
 
     get(GET_WEBHOOK_MAPPING) {
+        val requestedId = call.parameters.id ?: throw InvalidEntityException()
 
+        val (_, webhook) = webhookService.getWebhook(requestedId, true)
+
+        call.respond(webhook!!)
     }
 
     get(GET_WEBHOOK_AVAILABILITY_MAPPING) {
+        val requestedNonce = call.parameters.webhookNonce ?: throw InvalidEntityException()
 
+        call.respond(
+            if (webhookService.isAvailable(requestedNonce)) {
+                HttpStatusCode.OK
+            } else {
+                HttpStatusCode.Forbidden
+            }
+        )
     }
 
     get(GET_WEBHOOKS_MAPPING) {
+        val (limit, offset) = call.request.queryParameters.limitAndOffset
 
+        val (_, webhooks) = webhookService.getWebhooks(limit, offset, true)
+
+        call.respond(webhooks!!)
     }
 
     put(PUT_WEBHOOK_MAPPING) {
+        val requestedId = call.parameters.id ?: throw InvalidEntityException()
 
+        val webhookDto = call.receive<WebhookUpsertDto>()
+
+        val webhook = webhookUpsertDtoConverter.convertToEntity(webhookDto)
+
+        val (_, updatedWebhook) = webhookService.updateWebhook(requestedId, webhook)
+
+        call.respond(updatedWebhook!!)
     }
 
     patch(PATCH_WEBHOOK_NONCE_MAPPING) {
+        val requestedId = call.parameters.id ?: throw InvalidEntityException()
 
+        val updatedNonce = webhookService.regenerateNonce(requestedId)
+
+        call.respond(updatedNonce)
     }
 
     delete(DELETE_WEBHOOK_MAPPING) {
+        val requestedId = call.parameters.id ?: throw InvalidEntityException()
 
+        webhookService.deleteWebhook(requestedId)
+
+        call.respond(HttpStatusCode.NoContent)
     }
 }

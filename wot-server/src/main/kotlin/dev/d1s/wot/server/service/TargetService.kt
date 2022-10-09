@@ -23,6 +23,8 @@ import dev.d1s.teabag.dto.EntityWithDto
 import dev.d1s.teabag.dto.convertToDtoIf
 import dev.d1s.teabag.dto.ktorm.ExportedSequenceWithDto
 import dev.d1s.teabag.dto.ktorm.convertElementsToDtoIf
+import dev.d1s.teabag.ktorm.DEFAULT_LIMIT
+import dev.d1s.teabag.ktorm.DEFAULT_OFFSET
 import dev.d1s.teabag.postgresql.handlePsqlUniqueViolation
 import dev.d1s.teabag.postgresql.handlePsqlUniqueViolationOrThrow
 import dev.d1s.teabag.stdlib.exception.EntityAlreadyExistsException
@@ -52,8 +54,8 @@ interface TargetService {
     ): EntityWithDto<Target, TargetDto>
 
     suspend fun getTargets(
-        limit: Int,
-        offset: Int,
+        limit: Int?,
+        offset: Int?,
         requireDto: Boolean = false
     ): ExportedSequenceWithDto<Target, TargetDto>
 
@@ -117,11 +119,11 @@ class TargetServiceImpl : TargetService {
         }
 
     override suspend fun getTargets(
-        limit: Int,
-        offset: Int,
+        limit: Int?,
+        offset: Int?,
         requireDto: Boolean
     ): ExportedSequenceWithDto<Target, TargetDto> {
-        val targets = targetRepository.findAllTargets(limit, offset)
+        val targets = targetRepository.findAllTargets(limit ?: DEFAULT_LIMIT, offset ?: DEFAULT_OFFSET)
 
         return targets to targetDtoConverter.convertElementsToDtoIf(targets, requireDto)
     }

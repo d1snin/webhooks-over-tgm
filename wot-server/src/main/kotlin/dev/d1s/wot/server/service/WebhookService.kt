@@ -24,6 +24,8 @@ import dev.d1s.teabag.dto.EntityWithDto
 import dev.d1s.teabag.dto.convertToDtoIf
 import dev.d1s.teabag.dto.ktorm.ExportedSequenceWithDto
 import dev.d1s.teabag.dto.ktorm.convertElementsToDtoIf
+import dev.d1s.teabag.ktorm.DEFAULT_LIMIT
+import dev.d1s.teabag.ktorm.DEFAULT_OFFSET
 import dev.d1s.teabag.postgresql.handlePsqlUniqueViolationOrThrow
 import dev.d1s.teabag.stdlib.exception.EntityNotFoundException
 import dev.d1s.wot.commons.dto.webhook.WebhookDto
@@ -52,8 +54,8 @@ interface WebhookService {
     suspend fun getWebhookByNonce(nonce: String, requireDto: Boolean = false): EntityWithDto<Webhook, WebhookDto>
 
     suspend fun getWebhooks(
-        limit: Int,
-        offset: Int,
+        limit: Int?,
+        offset: Int?,
         requireDto: Boolean = false
     ): ExportedSequenceWithDto<Webhook, WebhookDto>
 
@@ -61,7 +63,7 @@ interface WebhookService {
 
     suspend fun deleteWebhook(id: String)
 
-    suspend fun isAvailable(id: String): Boolean
+    suspend fun isAvailable(nonce: String): Boolean
 
     suspend fun checkWebhookAvailability(webhook: Webhook)
 
@@ -125,11 +127,11 @@ class WebhookServiceImpl : WebhookService {
     }
 
     override suspend fun getWebhooks(
-        limit: Int,
-        offset: Int,
+        limit: Int?,
+        offset: Int?,
         requireDto: Boolean
     ): ExportedSequenceWithDto<Webhook, WebhookDto> {
-        val webhooks = webhookRepository.findAllWebhooks(limit, offset)
+        val webhooks = webhookRepository.findAllWebhooks(limit ?: DEFAULT_LIMIT, offset ?: DEFAULT_OFFSET)
 
         return webhooks to webhookDtoConverter.convertElementsToDtoIf(webhooks, requireDto)
     }
@@ -168,8 +170,8 @@ class WebhookServiceImpl : WebhookService {
         webhook.delete()
     }
 
-    override suspend fun isAvailable(id: String): Boolean {
-        val (webhook, _) = this.getWebhook(id)
+    override suspend fun isAvailable(nonce: String): Boolean {
+        val (webhook, _) = this.getWebhookByNonce(nonce)
 
         return webhook.isAvailable
     }

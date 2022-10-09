@@ -49,8 +49,8 @@ interface DeliveryService {
     suspend fun getDeliveryById(id: String, requireDto: Boolean = false): EntityWithDto<Delivery, DeliveryDto>
 
     suspend fun getDeliveries(
-        limit: Int = DEFAULT_LIMIT,
-        offset: Int = DEFAULT_OFFSET,
+        limit: Int?,
+        offset: Int?,
         requireDto: Boolean = false
     ): ExportedSequenceWithDto<Delivery, DeliveryDto>
 
@@ -135,12 +135,13 @@ class DeliveryServiceImpl : DeliveryService {
     }
 
     override suspend fun getDeliveries(
-        limit: Int,
-        offset: Int,
+        limit: Int?,
+        offset: Int?,
         requireDto: Boolean
-    ) = deliveryRepository.findAllDeliveries(limit, offset).let {
-        it to deliveryDtoConverter.convertElementsToDtoIf(it, requireDto)
-    }
+    ): ExportedSequenceWithDto<Delivery, DeliveryDto> =
+        deliveryRepository.findAllDeliveries(limit ?: DEFAULT_LIMIT, offset ?: DEFAULT_OFFSET).let {
+            it to deliveryDtoConverter.convertElementsToDtoIf(it, requireDto)
+        }
 
     override suspend fun deleteDelivery(id: String): Delivery {
         val (delivery, _) = this.getDeliveryById(id)
