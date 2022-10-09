@@ -20,6 +20,7 @@ import cc.popkorn.injecting
 import dev.d1s.teabag.dto.DtoConverter
 import dev.d1s.teabag.ktor.server.id
 import dev.d1s.teabag.ktor.server.limitAndOffset
+import dev.d1s.teabag.stdlib.checks.orInvalid
 import dev.d1s.teabag.stdlib.exception.InvalidEntityException
 import dev.d1s.wot.commons.const.*
 import dev.d1s.wot.commons.dto.target.TargetUpsertDto
@@ -47,7 +48,7 @@ fun Route.targetRoutes() {
     }
 
     get(GET_TARGET_MAPPING) {
-        val requestedId = call.parameters.id ?: throw InvalidEntityException()
+        val requestedId = call.parameters.id.orInvalid()
 
         val (_, target) = targetService.getTarget(requestedId, true)
 
@@ -63,7 +64,7 @@ fun Route.targetRoutes() {
     }
 
     put(PUT_TARGET_MAPPING) {
-        val requestedId = call.parameters.id ?: throw InvalidEntityException()
+        val requestedId = call.parameters.id.orInvalid()
 
         val targetDto = call.receive<TargetUpsertDto>()
 
@@ -75,7 +76,7 @@ fun Route.targetRoutes() {
     }
 
     delete(DELETE_TARGET_MAPPING) {
-        val requestedId = call.parameters.id ?: throw InvalidEntityException()
+        val requestedId = call.parameters.id.orInvalid()
 
         targetService.deleteTarget(requestedId)
 

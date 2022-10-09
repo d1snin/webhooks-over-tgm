@@ -20,6 +20,7 @@ import cc.popkorn.injecting
 import dev.d1s.teabag.dto.DtoConverter
 import dev.d1s.teabag.ktor.server.id
 import dev.d1s.teabag.ktor.server.limitAndOffset
+import dev.d1s.teabag.stdlib.checks.orInvalid
 import dev.d1s.teabag.stdlib.exception.InvalidEntityException
 import dev.d1s.wot.commons.const.*
 import dev.d1s.wot.commons.dto.delivery.DeliveryCreationDto
@@ -48,7 +49,7 @@ fun Route.protectedDeliveryRoutes() {
     }
 
     get(GET_DELIVERY_MAPPING) {
-        val requestedId = call.parameters.id ?: throw InvalidEntityException()
+        val requestedId = call.parameters.id.orInvalid()
 
         val (_, delivery) = deliveryService.getDeliveryById(requestedId, true)
 
@@ -64,7 +65,7 @@ fun Route.protectedDeliveryRoutes() {
     }
 
     delete(DELETE_DELIVERY_MAPPING) {
-        val requestedId = call.parameters.id ?: throw InvalidEntityException()
+        val requestedId = call.parameters.id.orInvalid()
 
         deliveryService.deleteDelivery(requestedId)
 

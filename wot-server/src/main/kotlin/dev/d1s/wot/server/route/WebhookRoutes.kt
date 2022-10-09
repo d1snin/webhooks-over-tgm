@@ -20,6 +20,7 @@ import cc.popkorn.injecting
 import dev.d1s.teabag.dto.DtoConverter
 import dev.d1s.teabag.ktor.server.id
 import dev.d1s.teabag.ktor.server.limitAndOffset
+import dev.d1s.teabag.stdlib.checks.orInvalid
 import dev.d1s.teabag.stdlib.exception.InvalidEntityException
 import dev.d1s.wot.commons.const.*
 import dev.d1s.wot.commons.dto.webhook.WebhookUpsertDto
@@ -48,7 +49,7 @@ fun Route.webhookRoutes() {
     }
 
     get(GET_WEBHOOK_MAPPING) {
-        val requestedId = call.parameters.id ?: throw InvalidEntityException()
+        val requestedId = call.parameters.id.orInvalid()
 
         val (_, webhook) = webhookService.getWebhook(requestedId, true)
 
@@ -56,7 +57,7 @@ fun Route.webhookRoutes() {
     }
 
     get(GET_WEBHOOK_AVAILABILITY_MAPPING) {
-        val requestedNonce = call.parameters.webhookNonce ?: throw InvalidEntityException()
+        val requestedNonce = call.parameters.webhookNonce.orInvalid()
 
         call.respond(
             if (webhookService.isAvailable(requestedNonce)) {
@@ -76,7 +77,7 @@ fun Route.webhookRoutes() {
     }
 
     put(PUT_WEBHOOK_MAPPING) {
-        val requestedId = call.parameters.id ?: throw InvalidEntityException()
+        val requestedId = call.parameters.id.orInvalid()
 
         val webhookDto = call.receive<WebhookUpsertDto>()
 
@@ -88,7 +89,7 @@ fun Route.webhookRoutes() {
     }
 
     patch(PATCH_WEBHOOK_NONCE_MAPPING) {
-        val requestedId = call.parameters.id ?: throw InvalidEntityException()
+        val requestedId = call.parameters.id.orInvalid()
 
         val updatedNonce = webhookService.regenerateNonce(requestedId)
 
@@ -96,7 +97,7 @@ fun Route.webhookRoutes() {
     }
 
     delete(DELETE_WEBHOOK_MAPPING) {
-        val requestedId = call.parameters.id ?: throw InvalidEntityException()
+        val requestedId = call.parameters.id.orInvalid()
 
         webhookService.deleteWebhook(requestedId)
 
