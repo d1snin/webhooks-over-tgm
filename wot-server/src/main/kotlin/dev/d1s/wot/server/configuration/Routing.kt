@@ -16,20 +16,22 @@
 
 package dev.d1s.wot.server.configuration
 
-import dev.d1s.wot.server.route.deliveryRoutes
+import dev.d1s.wot.server.route.protectedDeliveryRoutes
 import dev.d1s.wot.server.route.targetRoutes
+import dev.d1s.wot.server.route.unprotectedDeliveryRoutes
 import dev.d1s.wot.server.route.webhookRoutes
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
     routing {
         authenticate {
-            deliveryRoutes()
+            protectedDeliveryRoutes()
             targetRoutes()
             webhookRoutes()
         }
+
+        unprotectedDeliveryRoutes()
     }
 }

@@ -37,20 +37,12 @@ private val deliveryService by injecting<DeliveryService>()
 private val deliveryCreationDtoConverter by injecting<DtoConverter<DeliveryCreationDto, Delivery>>()
 private val publicDeliveryCreationDtoConverter by injecting<DtoConverter<PublicDeliveryCreationDto, Delivery>>()
 
-fun Route.deliveryRoutes() {
+fun Route.protectedDeliveryRoutes() {
 
     post(POST_DELIVERY_MAPPING) {
         val deliveryDto = call.receive<DeliveryCreationDto>()
 
         val delivery = deliveryCreationDtoConverter.convertToEntity(deliveryDto)
-
-        call.respondWithCreatedDelivery(delivery)
-    }
-
-    post(POST_DELIVERY_PUBLIC_MAPPING) {
-        val deliveryDto = call.receive<PublicDeliveryCreationDto>()
-
-        val delivery = publicDeliveryCreationDtoConverter.convertToEntity(deliveryDto)
 
         call.respondWithCreatedDelivery(delivery)
     }
@@ -77,6 +69,17 @@ fun Route.deliveryRoutes() {
         deliveryService.deleteDelivery(requestedId)
 
         call.respond(HttpStatusCode.NoContent)
+    }
+}
+
+fun Route.unprotectedDeliveryRoutes() {
+
+    post(POST_DELIVERY_PUBLIC_MAPPING) {
+        val deliveryDto = call.receive<PublicDeliveryCreationDto>()
+
+        val delivery = publicDeliveryCreationDtoConverter.convertToEntity(deliveryDto)
+
+        call.respondWithCreatedDelivery(delivery)
     }
 }
 
